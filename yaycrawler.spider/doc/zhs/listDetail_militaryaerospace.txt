@@ -1,0 +1,69 @@
+{
+  "id":"www.militaryaerospace.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.militaryaerospace.com/headlines.html"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.militaryaerospace.com",
+	  "timeout": 8000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//td/div[@class='whitepaper-synopsis-td']/h2/a/@href).all()",
+     	"pagingRules": ["paging(https://www.militaryaerospace.com/headlines.pageNo.leftinheritedtop_standard_11.html$$pageNo$$1$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='ad-wrapper ']).get()",
+	       		"xpath(//iframe).get()",
+	       		"xpath(//p[@style='font-size: 20px;']).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@itemprop='headline']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@id='ContentBody']).get()",
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "author",
+	          "remark":"作者",
+	          "rule": "xpath(//span[@itemprop='name']/text()).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//span[@class='articlepublicationdatecnt']/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@id='ContentBody']/p/picture/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

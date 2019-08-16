@@ -1,0 +1,44 @@
+﻿{
+    "userAgent": "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30",
+    "pageProcessorModel":"site",
+    "extractorCfgs": {
+       picture: {
+            "objName": "picture",
+            "objXpath": "//div[@id='maincontent']",
+            "multi": false,
+            "targetUrlPatterns": [
+                "http://www.meizitu.com/a/[0-9]{1,4}.html"
+            ],
+            "helpUrlPatterns": [
+                "http://www.meizitu.com/a/list_1_[0-9]{1,2}.html"
+            ],
+            "fieldList": [
+               
+                {
+                    "sourceType": "newstext",
+                    "fieldExtractorType": "html",
+                    "fieldName": "content",
+                    "fieldExtractorExp": "//div[@id='picture']",
+                    "innerFileConfigs": [
+                        {
+                            "resourceName": "image",
+                            "resourceRegionExp": "//img/@src"
+                            
+                        }
+                    ]
+                    
+                }
+            ]
+        }
+    },
+    "saveCapture": true,
+    "sleep": 5000,
+    "startURL": [
+        "http://www.meizitu.com/a/list_1_1.html"
+    ],
+    "priority": 0,
+    "thread": 1,
+    "domain": "www.meizitu.com",
+    "retry": 2,
+    "timeout": 5000
+}

@@ -1,0 +1,60 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.army-guide.com/eng/article/index.php?pageNum=0"],
+  "domain": "www.army-guide.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//*[@id='content']/article/table/tbody/tr/td/table/tbody/tr/td/h4/a/@href", 
+  "newsCategory":"俄罗斯新闻",
+  "dbType":"news_other", 
+  "src":"www.army-guide.com",
+  "pagingModel": {
+      "startPage": 0,
+      "endPage": 0,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.army-guide.com/eng/article/index.php?pageNum=${page}&"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//article[@class='box post']/table[1]/tbody/tr[1]/td",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@align='center'][2]"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//article[@class='box post']/h3/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//tr[@valign='top']/td[@bgcolor='#FFFFFF']/p/text()",
+          
+        }
+      ]
+    }
+  }
+}

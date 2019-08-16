@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<mapper namespace="io.renren.modules.spider.dao.UnpackRecordDao">
+	
+	<insert id="save" parameterType="io.renren.modules.spider.entity.UnpackRecord">
+		insert into unpack_record(id,zipname,filestore_path,create_time,project, zip_path)
+			values(#{id},#{zipname},#{filestorePath},#{createTime},#{project}, #{zipPath})
+	</insert>
+	
+	<select id="getContent" parameterType="map" resultType="io.renren.modules.spider.entity.UnpackRecord">
+		select * from unpack_record
+		<if test="entity != null and entity != ''">
+			WHERE project = #{entity}
+		</if>
+		order by create_time desc
+		<if test="offset != null and limit != null">
+			limit ${offset}, ${limit}
+		</if>
+	</select>
+	
+	<select id="getCount" parameterType="map" resultType="long">
+		select count(id) from unpack_record 
+		<if test="entity != null and entity != ''">
+			where project = #{entity}
+		</if>
+	</select>
+	
+	<select id="getOneById" parameterType="String" resultType="io.renren.modules.spider.entity.UnpackRecord">
+		select * from unpack_record where id = #{id} 
+	</select>
+	
+</mapper>

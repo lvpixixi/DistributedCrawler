@@ -1,0 +1,60 @@
+{
+  "id":"www.81.cn", 
+  "spiderConf":{
+ 	  "startURL": ["http://www.81.cn/jmywyl/2019-01/29/content_9416197.htm"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.81.cn",
+	  "timeout": 5000
+  },
+  "pageProcessorConf":{
+  	 "name":"batchUrls",
+	  "extractors": [
+	   {
+ 		"objName": "news1",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"excludeExpressions":{
+ 			"page":"xpath(//div[@id='displaypagenum'] | //div[@class='text-right editor']).all()"
+ 		},
+ 		"dataType":"MAP",
+ 		"multi": false,  
+ 		"pageUrlRule":"xpath(//a[@class='page']/@href).all()",   
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@class='article-header']/h1/text() | //div[@class='container artichle-info']/h2/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@id='article-content']).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "来源",
+	          "fieldName": "source",
+	          "rule": "xpath(//div[@class='article-header']/div[@class='info']/span[1]/text()).get()"
+	        },	     
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//i[@class='time']/text() | //div[@class='container artichle-info']/p/span[3]/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@id='article-content']/**/img/@src|//div[@id='article-content']/**/**/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

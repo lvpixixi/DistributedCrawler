@@ -1,0 +1,63 @@
+{
+  "id":"www.nasa.gov", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.nasa.gov/mission_pages/station/press-releases"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.nasa.gov",
+	  "timeout": 5000,
+	  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36",
+  },
+  "project": "HJS",
+  "downloader":"PhantomJsMockDonwnloader",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='ember-view ubernode']/h3/a/@href).all()",
+     	"pagingRules": ["paging(https://www.nasa.gov/mission_pages/station/press-releases/?pageNo$$pageNo$$2$$2"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//p[@align='center']).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@class='title']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='text']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//div[@class='pr-promo-date-time']/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@class='text']/div/div/a/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

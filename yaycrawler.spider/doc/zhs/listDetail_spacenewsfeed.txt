@@ -1,0 +1,61 @@
+{
+  "id":"www.spacenewsfeed.com", 
+  "spiderConf":{
+ 	  "startURL": [ "http://www.spacenewsfeed.com"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.spacenewsfeed.com",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//td[@class='newstdright']/strong/a/@href).all()",
+     	"pagingRules": ["paging(http://www.spacenewsfeed.com/?start=pageNo$$pageNo$$0$$1$$50)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@itemprop='articleBody']/h1).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@itemprop='articleBody']/h1/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@itemprop='articleBody']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//div[@itemprop='articleBody']/p/strong/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@itemprop='articleBody']/p/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

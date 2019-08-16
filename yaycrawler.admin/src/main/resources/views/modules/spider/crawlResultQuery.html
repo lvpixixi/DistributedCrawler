@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>爬取结果检索</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<link rel="stylesheet" href="../../css/new.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+<!-- 引入日期控件 -->
+<script src="../../plugins/laydate/laydate.js"></script>
+<script type="text/javascript">
+// 日期插件的格式化
+laydate.render({
+	elem: '#begindate',
+	trigger: 'click',
+	type: "date", // 组件的类型：year,month,time···
+     done: value => { // 点击确认执行的回调函数，会把当前选择的时间传入进来
+      // 把选择的时间赋值给先前定义好的变量，显示在页面
+      vm.q.begindate = value;
+    } 
+});
+
+laydate.render({
+	elem: '#enddate',
+	trigger: 'click',
+	type: "date", // 组件的类型：year,month,time···
+    done: value => { // 点击确认执行的回调函数，会把当前选择的时间传入进来
+      	// 把选择的时间赋值给先前定义好的变量，显示在页面
+    	vm.q.enddate = value;
+    } 
+});
+
+</script> 
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<div class="form-group col-sm-1">
+			<select id="entitySelected" class="form-control" @change="query" style="width:120px" v-model="q.entitySelected">
+			  <option v-for="entity in entitys" v-bind:value="entity.name">
+			    {{ entity.code }}
+			  </option>
+			</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<div class="col-xs-4">
+				    <input type="text" class="form-control" v-model="q.key" placeholder="标题">
+				</div>
+				<div class="col-xs-4">
+				    <input type="text" class="form-control" v-model="q.begindate" id="begindate" placeholder="开始时间">
+				</div>
+				<div class="col-xs-4">
+				    <input type="text" class="form-control" v-model="q.enddate" id="enddate" placeholder="结束时间">
+				</div>
+			</div>
+			<a class="btn btn-default" @click="query">查询</a>
+			<a class="btn btn-primary" @click="view">编辑</a>
+			<a class="btn btn-primary" @click="checkAllSelectedTrue">审核通过</a>
+			<a class="btn btn-primary" @click="checkAllSelectedFalse">审核未通过</a>
+			<a class="btn btn-primary" @click="down2local">下载到本地</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList">
+    		<div class="col-lg-6">
+	    		<div class="form-group">
+				   	<div class="control-label">标题</div>
+				      <input type="text" class="form-control" v-model="info.title" placeholder="标题"/>
+				</div>
+			</div>
+			<!-- <script type="text/javascript">
+				if(vm.info.titleTr) {
+			</script>
+					<div class="col-lg-6">
+		    		<div class="form-group">
+					   	<div class="control-label">标题译文</div>
+					      <input type="text" class="form-control" v-model="info.title_tr" placeholder="标题译文"/>
+					</div>
+					</div>
+			<script type="text/javascript">
+				}
+			</script> -->
+			<div class="col-lg-6">
+				<div class="form-group">
+				   	<div class="control-label">发布时间</div>
+				     <input type="text" class="form-control" v-model="info.pubDate" placeholder="发布时间"/>
+				</div>
+    		</div>
+			<div class="col-lg-6">
+				<div class="form-group">
+			   	<div class="control-label">来源链接</div>
+			      <input type="text" class="form-control" v-model="info.crawler_url" placeholder="来源链接" readonly=true/>
+				</div>
+    		</div>
+			<div class="col-lg-6">
+				<div class="form-group">
+				   	<div class="control-label">采集时间</div>
+				    <input type="text" class="form-control" v-model="info.crawler_date" placeholder="采集时间" readonly=true/>
+				</div>
+    		</div>
+    		
+    		
+					<div class="row">
+					
+						<div class="col-md-6">
+							<div class="form-group">
+							   	<div class="control-label">新闻正文译文</div>
+							   		<input type="hidden" id="newscontenttr" v-model="info.content_tr"/>
+								   	<!-- 加载编辑器的容器 -->
+								    <script id="container2" name="content" type="text/plain"></script>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							   	<div class="control-label">新闻原文</div>
+							   		<input type="hidden" id="newscontent" v-model="info.content"/>
+								   	<!-- 加载编辑器的容器 -->
+								    <script id="container" name="content" type="text/plain"></script>
+							</div>
+						</div>
+				</div>
+			
+    		
+    		<!-- <script type="text/javascript">
+				if(!vm.info.contentTr) {
+			</script>
+				<div class="col-lg-6">
+					<div class="form-group">
+					   	<div class="control-label">新闻原文</div>
+					   		<input type="hidden" id="newscontent" v-model="info.content"/>
+						    <script id="container" name="content" type="text/plain">
+						
+    						</script>
+				</div>
+			
+			<script type="text/javascript">
+				}
+			</script> -->
+			
+			<script src="../../plugins/ueditor/ueditor.config.js"></script>
+			<script src="../../plugins/ueditor/ueditor.all.js"></script>
+			
+			<div class="col-lg-12">
+				<div class="form-group">
+	                <div class="col-sm-2 control-label"></div>
+	                <input type="button" class="btn btn-warning" @click="saveOrUpdate" value="保存"/>
+	                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="through" value="审核通过"/>
+	                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="out" value="审核未通过"/>
+	                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="back" value="返回"/>
+	            </div>
+			</div>
+			
+    </div>
+    
+</div>
+	<div class="modal" id="mymodal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+    			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">内容详情</h4>
+			</div>
+			<div class="modal-body">
+			      <div id="content_main">
+			      	展示
+				 </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+	</div>
+<script src="../../js/modules/spider/crawlResultQuery.js"></script>
+</body>
+<style>
+   .content_main_title {
+         width: 100%;
+         font-size: 26px;
+         font-weight: 600;
+         color: #444;
+         text-align: center;
+         font-family: Microsoft YaHei;
+         padding-bottom: 20px;
+     }
+     .content_main_dis {
+         width: 100%;
+         height: 24px;
+         line-height: 24px;
+         color: #8e8e8e;
+         text-align: center;
+         margin-bottom: 20px;
+         font-family: Microsoft YaHei;
+     }
+        .content_main_sm {
+         width: 100%;
+        /*  height: 24px; */
+         line-height: 24px;
+         color: #8e8e8e;
+         /* text-align: center; */
+         margin-bottom: 20px;
+         font-family: Microsoft YaHei;
+     }
+        .content_main_num {
+         width: 100%;
+        /*  height: 24px; */
+         line-height: 24px;
+         color: #8e8e8e;
+        text-align: right; 
+         margin-bottom: 20px;
+         font-family: Microsoft YaHei;
+     }
+     .modal-dialog {
+     width: 100%; 
+	}
+	.sel{
+	height: 32px;
+	width: 79px;
+	}
+</style>
+</html>

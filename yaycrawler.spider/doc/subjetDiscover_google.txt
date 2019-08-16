@@ -1,0 +1,28 @@
+{
+  "id":"cn.bing.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.google.com"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.google.com",
+	  "timeout": 5000,
+	  "proxy_Host": "127.0.0.1",
+	  "proxy_port": "51279",
+	  "proxy_type": "localProxy",
+  },
+  "downloader":"PhantomJsMockDonwnloader",
+  "pageProcessorConf":{
+  	 "name":"SubjectDiscover",
+     "mapConf":{
+     	"urlSeed":"https://www.google.com/search?q=${}&ei=0dQAXOO7CMztvgTk6oGoAw&start=${}&sa=N&ved=0ahUKEwij6ND6uvveAhXMto8KHWR1ADU4ChDy0wMIcw&biw=1366&bih=657",
+     	"indexs":["METOC support","weather squadron","weather wing",
+							 "weather attachment","meteorology","oceanography",
+							 "space weather","weather radar","radiosonde balloon",
+							 "satellite","decision aids","UUV","UAV","Weather Data Analysis","Weather Analysis and Forecast System"],
+     	"listRule":"xpath(div[@class='g']/div/div[@class='rc']/div[@class='r']/a/@href).all()",
+     	"totalCount":100,
+     	"pageSize":10
+     },
+  }
+}

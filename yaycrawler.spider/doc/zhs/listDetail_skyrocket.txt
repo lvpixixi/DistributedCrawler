@@ -1,0 +1,51 @@
+{
+  "id":"space.skyrocket.de", 
+  "spiderConf":{
+ 	  "startURL": [ "https://space.skyrocket.de/news.htm"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "space.skyrocket.de",
+	  "timeout": 5000,
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='news-item']/p/a/@href).all()",
+     	"pagingRules": ["paging(https://space.skyrocket.de/news.htm?pageNo$$pageNo$$1$$1)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='container']/div/h1).get()",
+	       		"xpath(//ul[@id='breadcrumbs']).get()",
+	       		"xpath(//div[@class='ref']).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@class='container']/div/h1/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='container']).get()",
+	        }
+	      ]
+	    }
+	]
+  }
+}

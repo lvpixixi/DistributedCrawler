@@ -1,0 +1,63 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.defense.gov/News/Archive/"],
+  "domain": "www.defense.gov",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//p[@class='title']/a/@href",  
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src": "www.defense.gov",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.defense.gov/News/Archive/?Page=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='article-body']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//h1[@itemprop='headline']",
+               			"//div[@class='mejs-layers']",
+               			"//div[@class='media-inline-img-container']",
+               			"//div[@class='media-inline-popup']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//h1[@itemprop='headline']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//aside[@class='meta']/ul/li[1]/time/text()",
+          
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id":"www.nesdis.noaa.gov", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.nesdis.noaa.gov/news-articles-archive"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.nesdis.noaa.gov",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//span[@class='field-content']/a/@href).all()",
+     	"pagingRules": ["paging(https://www.nesdis.noaa.gov/news-articles-archive?page=pageNo$$pageNo$$1$$1"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='field-date']).get()",
+	       		"xpath(//header).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@class='news-articles-heading']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//section[@id='block-system-main']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//span[@class='date-display-single']/@content).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//figure[@class='image']/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

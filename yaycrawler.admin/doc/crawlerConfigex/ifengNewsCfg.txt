@@ -1,0 +1,63 @@
+﻿{
+    "userAgent": "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30",
+    "extractorCfgs": [
+        {
+            "objName": "news",
+            "objXpath": "//div[@id='artical']",
+            "multi": false,
+            "targetUrlPatterns": [
+                "http://news.ifeng.com/a/[0-9]{8}/[0-9]{1,8}_0.shtml"
+            ],
+            "helpUrlPatterns": [
+                "http://news.ifeng.com/listpage/7129/[0-9]{1,4}.*/list.shtml"
+            ],
+            "fieldCfgs": [
+                {
+                    "sourceType": "html",
+                    "fieldExtractorType": "html",
+                    "fieldName": "title",
+                    "fieldExtractorExp": "//h1/text()"
+                },
+                {
+                    "sourceType": "html",
+                    "fieldExtractorType": "html",
+                    "fieldName": "publicTime",
+                    "fieldExtractorExp": "//p[@class='p_time']/span[1]/text()"
+                },
+                {
+                    "sourceType": "html",
+                    "fieldExtractorType": "html",
+                    "fieldName": "source",
+                    "fieldExtractorExp": "//p[@class='p_time']/span/span[@class='ss03']/text()"
+                },
+                {
+                    "sourceType": "newstext",
+                    "fieldExtractorType": "html",
+                    "fieldName": "content",
+                    "fieldExtractorExp": "//div[@id='main_content']",
+                    "innerFileConfigs": [
+                        {
+                            "resourceName": "image",
+                            "resourceRegionExp": "//img/@src",
+                            
+                        }
+                    ],
+                    "excludeRegionExp": {
+                        "xpath":["//div[@id='embed_hzh_div']"]
+                    },
+                    "excludeExpType": "xpath"
+                }
+            ]
+        }
+    ],
+    "saveCapture": true,
+    "sleep": 5000,
+    "startURL": [
+        "http://news.ifeng.com/listpage/7129/1/list.shtml"
+    ],
+    "priority": 0,
+    "thread": 1,
+    "domain": "http://news.ifeng.com",
+    "retry": 2,
+    "timeout": 5000
+}

@@ -1,0 +1,34 @@
+﻿{
+ "pageProcessorModel":"ipTest",   //页面解析模型： batchUrls：批量Url采集处理模型 ,site：通用网站处理模型,subject:百度新闻处理模型，weixin：微信新闻处理模型，listAndDetail：列表详情采集模型
+ "isUseProxy":true,
+ "startURL": [                       //url抽取列表
+ 			"http://www.ip111.cn/p=1", 
+ 			"http://www.ip111.cn/p=2",
+ 			"http://www.ip111.cn/p=3",
+ 			"http://www.ip111.cn/p=4",
+ 			"http://www.ip111.cn/p=5",
+ 			"http://www.ip111.cn/p=6"
+  ],                    
+  "thread": 1,                       //线程数
+  "domain": "www.ip111.cn",      //域名
+  "retry": 2,                        //爬取失败重试次数
+  "rootPath": "D:/data/webmagic/",   //文件存储根路径
+  "timeout": 5000,                   //请求超时时间
+  "extractorCfgs": {                 //抽取对象配置
+    "News": {                        //抽取对象Key值，解析对象时使用
+      "objName": "News",             //抽取对象名称 ，对应数据库表
+      "objXpath": "//html",          //对象抽取xpath根路径，缺省配置：//html   
+      "multi": false,                //是否抽取多个对象，缺省配置：false
+      "fieldList": [
+  
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='jumbotron']",
+          
+        }        
+      ]
+    }
+  }
+}

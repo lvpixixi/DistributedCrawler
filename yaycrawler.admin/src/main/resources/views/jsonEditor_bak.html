@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>JSON在线编辑器-BeJSON.com</title>
+<!-- Site CSS -->
+
+<script src="bejson/js/jquery.min.js"></script>
+<link href="bejson/css/bootstrap.min.css" rel="stylesheet">
+<script src="bejson/js/bootstrap.min.js"></script>
+<!--<link href="//cdn.bootcss.com/layer/3.0.1/skin/default/layer.min.css" rel="stylesheet">-->
+<link href="bejson/css/layer.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="bejson/css/global.css">
+<script src="bejson/js/global.js"></script>
+<script src="bejson/js/clipboard.min.js"></script>
+<script>
+	var NewVer = 201901092;
+</script>
+<link rel="stylesheet" href="bejson/css/layer.css"	id="layui_layer_skinlayercss" style="">
+</head>
+
+<body>
+	<div class="aw-container-wrap">
+		<div class="container">
+			<div class="row">
+				<div class="aw-content-wrap clearfix">
+					<div class=" aw-main-content"
+						style="min-height: 700px; max-height: 2000px">
+
+						<script>
+							var showaban = true;
+							var storageKey = "newtools20190315";
+							if (window.localStorage.getItem(storageKey) == null) {
+								$("#jsontools").after(
+										'<span class="newFeatureTip">●</span>');
+
+								$("#jsonsort").before(
+										'<span class="newItem">●</span>');
+								/* document.getElementById("jsonsort").onmouseover = function() {
+									window.localStorage.setItem(storageKey,
+											"has");
+									$(".newFeatureTip").text('');
+								} */
+							}
+						</script>
+						<div style="clear: both"></div>
+						<style>
+						.a2016 {
+							color: white;
+							font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, STHeiti,
+								MingLiu;
+							text-align: center;
+							background: red;
+							border-radius: 2px;
+						}
+						
+						.touxiang {
+							height: 20px;
+							line-height: 45px;
+						}
+						</style>
+						<!--<div style=" text-align: center;    background: #6699FF;    border-radius: 2px;"><a href="http://beshequ.com/data/thread-111-1-1.html" target="_blank" style="  color: white;  ">求教身份验证是放在session里好？还是用签名串来回交互的好？</a></div>-->
+						<!--<div class="a2016">2016 bejson祝各位工资涨涨涨,写程序无BUG,都能找到对象!!! new Object(); 拿走不谢!</div>-->
+
+						<!-- content st -->
+						<blockquote class="layui-elem-quote layui-quote-nm"
+							style='margin-bottom: 5px; display: none; padding: 4px 20px; font-size: 13px; text-align: left;'>
+							您最近使用了：<span id="history"></span>
+						</blockquote>
+						<script src="bejson/js/FileSaver.js"></script>
+						<link rel="stylesheet" type="text/css"
+							href="bejson/css/app.css">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<div class="media">
+									<div class="media-body">
+										<!--<h4 class="media-heading">JSON在线编辑器</h4>-->
+										<!--<div id="desc1">JSON在线编辑器 <a href="http://www.bejson.com/oldbejson/jsoneditoronline/" style="margin-top: 10px;" target="_blank">回到旧版本</a></div>-->
+									</div>
+								</div>
+
+							</div>
+							<div class="panel-body">
+								<!--内容块开始-->
+								<link rel="stylesheet" type="text/css"
+									href="bejson/css/core.css" />
+								<style type="text/css">
+* {
+	font-size: 13px;
+}
+
+#body-wrapper {
+	width: 100%;
+}
+/* Content Wrapper */
+#content-wrapper {
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	padding-bottom: 88px;
+	margin-bottom: -85px;
+	text-align: left;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#copyright-wrapper {
+	margin: 0 auto;
+	margin-bottom: 0px;
+}
+
+body {
+	overflow: auto;
+}
+</style>
+								<div id="content-wrapper" style="height: 700px">
+									<div id="jsonformatter"></div>
+									<div id="splitter"></div>
+									<div id="jsoneditor"></div>
+									<div class="clear" style="clear: both;"></div>
+									<div class="row">
+										<button class="btn btn-danger" id="saveAs"
+											style="margin-left: 15px;">保存</button>
+									</div>
+									<div class="clear" style="clear: both;"></div>
+								</div>
+								<div class="clear"></div>
+
+								
+								<!-- JSON Editor Online -->
+
+								<link rel="stylesheet" type="text/css"
+									href="bejson/css/jsoneditor.css">
+								<script type="text/javascript"
+									src="bejson/js/jsoneditor.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/notify.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/splitter.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/app.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/jsonlint.js"></script>
+								<!-- jReject -->
+								<link rel="stylesheet" type="text/css"
+									href="bejson/css/jquery.reject.css" />
+								<script type="text/javascript"
+									src="bejson/js/jquery.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/jquery.reject.js"></script>
+								<script type="text/javascript"
+									src="bejson/js/jquery.reject.360.js"></script>
+
+
+
+
+								<script type="text/javascript">
+									try {
+										app.load();
+										alert(111)
+										app.resize();
+										$(function() {
+											$(document)
+													.keydown(
+															function(e) {
+																if (e.keyCode == 115) {
+																	var leftval = $(
+																			'.jsonformatter-textarea')
+																			.val();
+																	if (leftval == "")
+																		return;
+																	if (leftval
+																			.substring(
+																					0,
+																					1) == "{"
+																			|| leftval
+																					.substring(
+																							0,
+																							1) == "[") {
+																		return;
+																	}
+																	var startPosition = leftval
+																			.indexOf("{");
+
+																	leftval = leftval
+																			.substring(startPosition);
+																	var lastPosition = leftval
+																			.lastIndexOf("}");
+																	leftval = leftval
+																			.substring(
+																					0,
+																					lastPosition + 1);
+																	$(
+																			'.jsonformatter-textarea')
+																			.val(
+																					leftval);
+																}
+															});
+										})
+									} catch (e) {
+									}
+								</script>
+
+								<!--内容块结束-->
+							</div>
+							<input type="hidden" id="tabsize" value="1" />
+							<div class="panel-footer"></div>
+						</div>
+
+						<!-- content ed -->
+						<script src="bejson/js/layer.js"></script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	</div>
+</body>
+</html>

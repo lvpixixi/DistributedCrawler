@@ -1,0 +1,25 @@
+{
+  "id":"cn.bing.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://cn.bing.com"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "cn.bing.com",
+	  "timeout": 5000
+  },
+  "downloader":"PhantomJsMockDonwnloader",
+  "pageProcessorConf":{
+  	 "name":"SubjectDiscover",
+     "mapConf":{
+     	"urlSeed":"https://cn.bing.com/search?q=${}&qs=HS&sc=6-0&cvid=AA65D95C1FF2413F8EE99A11CACF0640&sp=1&first=${}&FORM=BESBTB&ensearch=1",
+     	"indexs":["METOC support","weather squadron","weather wing",
+							 "weather attachment","meteorology","oceanography",
+							 "space weather","weather radar","radiosonde balloon",
+							 "satellite","decision aids","UUV","UAV","Weather Data Analysis","Weather Analysis and Forecast System"],
+     	"listRule":"xpath(li[@class='b_algo']/h2/a/@href).all()",
+     	"totalCount":100,
+     	"pageSize":10
+     },
+  }
+}

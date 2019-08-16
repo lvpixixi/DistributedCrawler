@@ -1,0 +1,83 @@
+﻿{
+  "pageProcessorModel":"weixin",                                       //页面解析模型： batchUrls：批量Url采集处理模型 ,site：通用网站处理模型,subject:百度新闻处理模型，weixin：微信新闻处理模型，listAndDetail：列表详情采集模型
+  "seedRex":"http://weixin.sogou.com/weixin?type=${type}&s_from=input&ie=utf8&query=${query}",   //种子表达式，会使用index词，替换种子表达式中的变量，生成种子url
+  "pipelines":["NewsDBPipeline","ImgPipeline","Html2PdfPipeline"], 
+  "startURL": [ 
+	"http://weixin.sogou.com/",
+  ],
+  "thread": 1,                       //线程数
+  "retry": 2,                        //爬取失败重试次数
+  "rootPath": "D:/data/webmagic/",   //文件存储根路径
+  "domain": "weixin.sogou.com",        //域名
+  "timeout": 5000,                   //请求超时时间
+  "indexs":["小火箭"],
+  "targetUrlPatterns": [                                              //详情页url链接表达式
+        "https://mp.weixin.qq.com/s/*"
+      ],
+  "extractorCfgs": {                                                  //抽取对象配置
+    "news_wx": {                                                         //抽取对象Key值，解析对象时使用
+      "objName": "news_wx",                                              //抽取对象名称 ，对应数据库表
+      "fileNameRules":["chatNumber","title"],
+      "objXpath": "//html",
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='js_content']",
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@data-src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='img-content']/h2[@id='activity-name']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",                                   //处理类型：rawtext：原始类型，不做处理；newstext：新闻类型，需要处理图片，格式化内容；datetext：日期类型，需要转成日期格式。
+          "fieldExtractorType": "html", 
+          "fieldName": "pubdate",
+          "fieldExtractorExp": "//em[@id='post-date']/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "publicName",
+          "fieldExtractorExp": "//div[@class='rich_media_meta_list']/a[@id='post-user']/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "chatNumber",
+          "fieldExtractorExp": "//div[@id='js_profile_qrcode']/div[@class='profile_inner']/p[1]/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "summary",
+          "fieldExtractorExp": "//div[@id='js_profile_qrcode']/div[@class='profile_inner']/p[2]/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//div[@id='meta_content']/em[@id!='post-date' and @class='rich_media_meta rich_media_meta_text']/text()",
+          
+        }
+      ]
+    }
+  }
+}

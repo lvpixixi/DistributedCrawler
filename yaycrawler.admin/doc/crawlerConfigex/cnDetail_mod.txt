@@ -1,0 +1,76 @@
+{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsDBPipeline"],
+  "startURL": [ "http://www.mod.gov.cn/topnews/node_46932.htm"],
+  "domain": "www.mod.gov.cn",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//ul[@class='list-unstyled article-list']/li/a/@href",  
+  "newsCategory":"中文新闻",
+  "dbType":"news_cn",
+  "src":"中国国防部网",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.mod.gov.cn/topnews/node_46932.htm?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_cn",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='article-content']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='entSlide_txta']",
+               			"//div[@class='otherContent_01']",
+               			"//div[@id='displaypagenum']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='article-header']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@class='info']/span[4]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "sourceSite",
+          "fieldExtractorExp": "//div[@class='info']/span[1]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//div[@class='info']/span[2]/text()",
+          
+        }
+      ]
+    }
+  }
+}

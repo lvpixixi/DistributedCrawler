@@ -1,0 +1,63 @@
+{
+  "pageProcessorModel":"listAndDetail",  
+  "pipelines":["ImgPipeline","JSONPipeline"],
+  "startURL": [ "http://www.drc.gov.cn/Json/GetPageDocuments.ashx?chnid=4&leafid=0&page=1&pagesize=30&sublen=35&sumlen=160&expertid=0&keyword=&experts=&year=0"],
+  "domain": "www.drc.gov.cn",
+  "newsCategory":"中文新闻",
+  "dbType":"news_cn",
+  "retry": 3,
+  "timeout":50000,
+  "sleep":5000,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefRegex":"(?<=\"link\":\").*?(?=\")",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 2,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.drc.gov.cn/Json/GetPageDocuments.ashx?chnid=4&leafid=0&page=${page}&pagesize=30&sublen=35&sumlen=160&expertid=0&keyword=&experts=&year=0&"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='MainContent_docContent']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='gg200x300']",
+               			"//div[@class='ep-source cDGray']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='MainContent_docSubject']/text()"
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@id='MainContent_docAuthor']/text()"
+          
+        }
+        
+      ]
+    }
+  }
+}

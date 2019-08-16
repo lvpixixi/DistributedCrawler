@@ -1,0 +1,203 @@
+html,
+body {
+    margin: 0px;
+    height: 100%;
+}
+
+input::-webkit-input-placeholder {
+    color: #535353 !important;
+}
+
+input:-moz-placeholder {
+    color: #535353 !important;
+}
+
+input::-moz-placeholder {
+    color: #535353 !important;
+}
+
+input:-ms-input-placeholder {
+    color: #535353 !important;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    background-size: cover;
+    overflow: hidden;
+    font-family: 'microsoft yahei';
+}
+
+.loginPage {
+    width: 390px;
+    height: 320px;
+    position: absolute;
+    left: 50%;
+    top: 25%;
+    margin-left: -190px;
+    box-shadow: 0px 0px 37px rgba(105, 165, 216, 0.44);
+    border-radius: 5px;
+}
+
+input {
+    outline: none;
+}
+
+.loginPage .loginMain {
+    width: 390px;
+    height: 320px;
+    display: table-cell;
+    vertical-align: middle;
+    padding-bottom: 6%;
+}
+
+.login-logo {
+    width: 390px;
+    height: 68px;
+    background: rgba(34,62,97,0.6);
+    margin: 0px auto;
+    border-radius: 5px 5px 0 0;
+    text-shadow: 0px 2px 13px #fff
+}
+
+.login-logo span {
+    height: 68px;
+    line-height: 68px;
+    color: #fff;
+    font-size: 20px;
+    display: inline-block;
+    font-family: 'microsoft yahei';
+    width: 100%;
+    text-align: center;
+}
+
+.login-content {
+    width: 390px;
+    height: 225px;
+    background: #2d2d2d;/*     padding:40px 10px 40px 10px; */
+    border-radius: 0px 0px 5px 5px;
+    margin: 0px auto;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+    opacity: 0.8;
+    padding-top: 27px;
+}
+
+.login-content .action_input {
+    width: 322px;
+    height: 120px;
+    background: #000000;
+    border-radius: 20px;
+    margin: 0px auto;
+}
+
+.login-info {
+    width: 100%;
+    height: 59px;
+    background: #1f1f1f;
+    position: relative;
+}
+
+.login-info.user-info {
+    margin-bottom: 2px;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.login-info.pwd-info {
+    border-radius: 0px 0px 5px 5px;
+}
+
+.login-info span.user {
+    float: left;
+    width: 60px;
+    height: 58px;
+    line-height: 58px;
+    color: #fff;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.login-info span.pwd {
+    float: left;
+    width: 60px;
+    height: 58px;
+    line-height: 58px;
+    color: #fff;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.loginPage .login-span {
+    display: none;
+    color: red;
+    font-size: 12px;
+    display: inline-block;
+    position: absolute;
+    top: -9px;
+    left: 0px;
+    font-family: 'microsoft yahei'
+}
+
+.login-input {
+    width: 230px;
+    height: 58px;
+    line-height: 58px;
+    border: none;
+    background: #1f1f1f;
+    font-family: 'microsoft yahei';
+    color: #fff;
+    font-size: 18px;
+}
+
+.login-oper {
+    width: 322px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0px auto;
+    position: relative;
+}
+
+.login-btn {
+    width: 322px;
+    height: 52px;
+    border: none;
+    display: inline-block;
+    background: #14253A;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-family: 'microsoft yahei';
+    font-size: 20px;
+    cursor: pointer;
+    text-align: center;
+    color: #fff;
+    margin-top: 27px;
+    text-shadow: 0px -1px 6px #fff;
+    box-shadow: 0px 4px 0px #2C4463;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.login-btn:active {
+    box-shadow: 0px 0px 0px #000;
+    top: 2px;
+}
+
+.login-btn:hover {
+    background: #132D4E;
+}
+
+.bottom {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: right;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 24px;
+    margin-top: 80px;
+    padding-right: 40px;
+}

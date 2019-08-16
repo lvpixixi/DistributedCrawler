@@ -1,0 +1,39 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["NewsDBPipeline","Html2PdfPipeline"],
+  "startURL": [ "http://www.chinaiiss.com/military/"],
+  "domain": "www.space.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"http://www.chinaiiss.com/military/view/*",  
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.chinaiiss.com/military/",
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "News",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='text_m']",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='text_m']/h6/a/text()",
+          
+        }
+      ]
+    }
+  }
+}

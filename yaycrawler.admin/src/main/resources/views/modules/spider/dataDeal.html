@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数据查询</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../plugins/cron/jquery-cron.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/new.css">
+    <script src="../../libs/jquery.min.js"></script>
+    <script src="../../plugins/layer/layer.js"></script>
+    <script src="../../libs/bootstrap.min.js"></script>
+    <script src="../../libs/vue.min.js"></script>
+    <script src="../../libs/validator.min.js"></script>
+    <script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+    <script src="../../plugins/cron/jquery-cron-zh_CN.js"></script>
+    <script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn clearfix">
+            <div class="form-group col-sm-2">
+                <select id="entitySelected" class="form-control" @change="query" v-model="q.entitySelected">
+                    <option v-for="entity in entitys" v-bind:value="entity.name">
+                        {{ entity.code }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.key" @keyup.enter="query" placeholder="标题关键字">
+            </div>
+            <div class="form-group col-sm-3 clearfix">
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" v-model="q.begindate" id="begindate" placeholder="开始时间">
+                </div>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" v-model="q.enddate" id="enddate" placeholder="结束时间">
+                </div>
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+            <a class="btn btn-primary" @click="doubleCheck">保留</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+    <div v-show="showEdit">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="control-label">标题</div>
+                <input type="text" class="form-control" v-model="datainfo.title" placeholder="标题"/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="control-label">发布时间</div>
+                <input type="text" class="form-control" v-model="datainfo.pubDate" placeholder="发布时间"/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="control-label">来源链接</div>
+                <input type="text" class="form-control" v-model="datainfo.crawler_url" placeholder="来源链接"
+                       readonly=true/>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="control-label">采集时间</div>
+                <input type="text" class="form-control" v-model="datainfo.crawler_date" placeholder="采集时间"
+                       readonly=true/>
+            </div>
+        </div>
+        <div v-show="true">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="control-label">新闻原文</div>
+                        <input type="hidden" id="newscontent" v-model="datainfo.content"/>
+                        <!-- 加载编辑器的容器 -->
+                        <script id="container" name="content" type="text/plain"></script>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="control-label">新闻译文</div>
+                        <input type="hidden" id="newscontenttr" v-model="datainfo.content_tr"/>
+                        <!-- 加载编辑器的容器 -->
+                        <script id="container2" name="content" type="text/plain"></script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-warning" @click="query" value="保存"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="query" value="审核通过"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="query" value="审核未通过"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="query" value="返回"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="mymodal" tabindex="-1">
+    <div class="modal-dialog" style="width: 100%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">内容详情</h4>
+            </div>
+            <div class="modal-body">
+                <div id="content_main">
+                    展示
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="../../plugins/ueditor/ueditor.config.js"></script>
+<script src="../../plugins/ueditor/ueditor.all.js"></script>
+<!-- 引入日期控件 -->
+<script src="../../plugins/laydate/laydate.js"></script>
+<script src="../../js/modules/spider/dataDeal.js"></script>
+</body>
+</html>

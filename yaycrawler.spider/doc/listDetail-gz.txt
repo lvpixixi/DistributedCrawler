@@ -1,0 +1,59 @@
+{
+  "id":"reli.cssn.cn", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.guazi.com/bj/buy/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.guazi.com",
+	  "timeout": 5000
+  },
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(ul[@class='carlist']/li/a/@href).all()",
+     	"pagingRules": ["paging(https://www.guazi.com/bj/buy/o$$page$$2$$50/#bread)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "gzcar",
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false,     
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(div[@class='product-textbox']/h2/text()).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "fieldName": "counts",
+	          "remark":"数量",
+	          "rule": "xpath(i[@class='fc-green']).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "上牌时间",
+	          "fieldName": "pubDate",
+	          "rule": "xpath(li[@class='one']/span/text()).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "里程",
+	          "fieldName": "licheng",
+	          "rule": "xpath(li[@class='two']/span/text()).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "地区",
+	          "fieldName": "licheng",
+	          "rule": "xpath(li[@class='three']/span/text()).get()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

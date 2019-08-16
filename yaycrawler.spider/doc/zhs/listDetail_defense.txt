@@ -1,0 +1,70 @@
+{
+  "id":"www.defense.gov", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.defense.gov/News/Archive/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.defense.gov",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//p[@class='title']/a/@href).all()",
+     	"pagingRules": ["paging(https://dod.defense.gov/News/Archive/?Page=pageNo$$pageNo$$2$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//h1[@itemprop='headline']).get()",
+				"xpath(//div[@class='mejs-layers']).get()",
+				"xpath(//div[@class='media-inline-img-container']).get()",
+				"xpath(//div[@class='media-inline-popup']).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@itemprop='headline']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='article-body']).get()",
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "author",
+	          "remark":"作者",
+	          "rule": "xpath(//span[@itemprop='name']/text()).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//aside[@class='meta']/ul/li[1]/time/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@class='image-wrapper']/img[@class='img-responsive']/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

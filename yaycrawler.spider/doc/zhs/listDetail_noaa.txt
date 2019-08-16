@@ -1,0 +1,61 @@
+{
+  "id":"www.noaa.gov", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.noaa.gov/media-releases"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.noaa.gov",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='view-content']/div/article/div[@class='node-inner']/a/@href).all()",
+     	"pagingRules": ["paging(https://www.noaa.gov/media-releases?page=pageNo$$pageNo$$0$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='dnd-legend-wrapper']).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@class='pane-content']/h1/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='field field-name-body field-type-text-with-summary field-label-hidden']/div/div[@class='field-item even']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//span[@class='date-published']/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@class='field field-name-body field-type-text-with-summary field-label-hidden']/div/div[@class='field-item even']/div/div/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

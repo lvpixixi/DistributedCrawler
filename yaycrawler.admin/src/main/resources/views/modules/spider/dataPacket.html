@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数据发送</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../plugins/cron/jquery-cron.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <script src="../../libs/jquery.min.js"></script>
+    <script src="../../plugins/layer/layer.js"></script>
+
+    <script src="../../libs/bootstrap.min.js"></script>
+    <script src="../../libs/vue.min.js"></script>
+    <script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <!-- 引入日期控件 -->
+    <script src="../../plugins/laydate/laydate.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn clearfix">
+            <div class="form-group col-sm-2">
+                <select id="entitySelected" class="form-control" @change="query"
+                        v-model="q.entitySelected">
+                    <option v-for="entity in entitys" v-bind:value="entity.code">
+                        {{ entity.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-3">
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" v-model="q.begindate" id="begindate" placeholder="开始时间">
+                </div>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" v-model="q.enddate" id="enddate" placeholder="结束时间">
+                </div>
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+            <a class="btn btn-primary" @click="send">发送</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+<script src="../../js/modules/spider/dataPacket.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.isro.gov.in/updates-archivals"],
+  "domain": "www.isro.gov.in",
+  "retry": 3,
+  "language": "India",
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//td[@class='views-field views-field-title-1']/a/@href",  
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.isro.gov.in/updates-archivals?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='news-detail']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//span[@class='news-date-time']",
+               			"//div[@class='news-detail']/h3"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='news-detail']/h3/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//span[@class='news-date-time']/text()",
+          
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.military-today.com/aircraft.htm"],
+  "domain": "www.military-today.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@align='CENTER']/table/tbody/tr/td[2]/font[1]/a/@href", 
+  "newsCategory":"美国新闻",
+  "dbType":"news_other", 
+  "src": "www.military-today.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.military-today.com/aircraft.htm?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//table[@id='table37']/tbody/tr/td[@valign='top'][1] | //table[@id='table52']/tbody/tr/td",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//table[@id='table37']/tbody/tr/td[@valign='top'][1]/h1",
+               			"//table[@id='table37']/tbody/tr/td[@valign='top'][1]/h2",
+               			"//form[@id='cse-search-box']",
+               			"//p[@align='center']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//h1[@align='center']/strong/font/text()",
+          
+        }
+      ]
+    }
+  }
+}

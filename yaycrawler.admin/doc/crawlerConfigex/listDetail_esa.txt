@@ -1,0 +1,64 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.esa.int/Our_Activities/Space_News/(archive)/0"],
+  "domain": "www.esa.int",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//table[@id='archt']/tbody/tr/td[4]/a/@href",  
+  "newsCategory":"欧洲新闻",
+  "dbType":"news_other",
+  "src": "www.esa.int",
+  "pagingModel": {
+      "startPage": 1,
+      "step": 10,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.esa.int/Our_Activities/Space_News/(archive)/${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='article']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='img_obj r_img']",
+               			"//div[@class='continuebox']",
+               			"//div[@id='social']",
+               			"//div[@class='dots']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='art_title']/h2/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//span[@class='art_date']/text()",
+          
+        }
+      ]
+    }
+  }
+}

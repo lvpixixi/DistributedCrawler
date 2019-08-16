@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.spider.dao.WeaponMapper">
+	<select id="getAllContent" resultType="com.mss.crawler.custom.weapon.Weapon" >
+		select id,title, classify, bigclassify, content, url, synonym_title as synonymTitle, classify_code as classifyCode from weapon
+	</select> 
+	<select id="getNames" resultType="com.mss.crawler.custom.weapon.Weapon">
+		select id, title from weapon where title like "%/%"
+	</select>
+	<update id="addSynonymTitle" parameterType="com.mss.crawler.custom.weapon.Weapon">
+		UPDATE weapon SET synonym_title = #{synonymTitle} WHERE id=#{id}
+	</update>
+</mapper>

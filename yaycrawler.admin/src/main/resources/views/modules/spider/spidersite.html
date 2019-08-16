@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<div class="form-group col-sm-1">
+				<select id="projectSelected" class="form-control" @click="reload" style="width:120px" v-model="q.projectSelected">
+				  <option value=0>全部</option>
+				  <option v-for="project in projectList" v-bind:value="project.id">
+				    {{ project.name }}
+				  </option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.searchword" @keyup.enter="query" placeholder="域名或网站名">
+			</div>
+			<a class="btn btn-default" @click="query">查询</a>
+			<a v-if="hasPermission('spider:spidersite:save')" class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a v-if="hasPermission('spider:spidersite:update')" class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a v-if="hasPermission('spider:spidersite:delete')" class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			<a v-if="hasPermission('spider:spidersite:delete')" class="btn btn-primary" @click="checkUrl"><i class="fa fa-search"></i>&nbsp;网站状态检测</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">网址</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.url" placeholder="请输入网站，例如：“http://www.sina.com.cn”"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">网站名称</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.siteName" placeholder="请输入网站名称"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">网站域名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.domain" placeholder="请输入网站域名"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">网站编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.charset" placeholder="请输入网址编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">重试次数</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.cycleRetryTimes" placeholder="失败重试次数"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">Cookies</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.defaultCookies" placeholder="默认Cookies"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">头信息</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.headers" placeholder="请求头信息"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">间隔时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.sleepTime" placeholder="请求间隔时间，毫秒为单位"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">超时时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.timeOut" placeholder="请求超时时间，毫秒为单位"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">代理设置</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.userAgent" placeholder="请求头代理设置"/>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">所属项目</div>
+			   	<div class="col-sm-10">
+			   		<label v-for="project in projectList" class="checkbox-inline">
+					  <input type="checkbox" :value="project.id" v-model="spiderSite.projectIdList">{{project.name}}
+					</label>
+				</div>
+			</div>
+									<!-- <div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.loginJsFileName" placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderSite.loginJudgeExpression" placeholder=""/>
+			    </div>
+			</div> -->
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="../../js/modules/spider/spidersite.js"></script>
+</body>
+</html>

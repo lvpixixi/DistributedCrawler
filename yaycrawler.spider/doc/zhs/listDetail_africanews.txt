@@ -1,0 +1,62 @@
+{
+  "id":"africanews.space", 
+  "spiderConf":{
+ 	  "startURL": [ "https://africanews.space"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "africanews.space",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='td-ss-main-content td_block_template_1']/div/div/div/h3[@class='entry-title td-module-title']/a/@href).all()",
+     	"pagingRules": ["paging(https://africanews.space/page/pageNo/$$pageNo$$2$$2"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@id='pryc-wp-acctp-bottom']).get()",
+	       		"xpath(//div[@class='saboxplugin-wrap']).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@class='entry-title']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='td-post-content']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//header[@class='td-post-title']/div[@class='td-module-meta-info']/span[@class='td-post-date']/time[@class='entry-date updated td-module-date']/@datetime).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//figure/img/@src | //figure/a/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

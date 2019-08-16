@@ -1,0 +1,50 @@
+﻿{
+    "pageProcessorModel":"site",
+    "startURL": [
+        "http://www.micai.com/wuqi/46_0.html",
+        "http://www.micai.com/wuqi/47_0.html",
+        "http://www.micai.com/wuqi/48_0.html",
+        "http://www.micai.com/wuqi/49_0.html",
+        "http://www.micai.com/wuqi/50_0.html",
+        "http://www.micai.com/wuqi/51_0.html",
+        "http://www.micai.com/wuqi/52_0.html"
+    ],
+   "extractorCfgs": {                                                  //抽取对象配置
+    "News": {                                                         //抽取对象Key值，解析对象时使用
+      "objName": "News",                                              //抽取对象名称 ，对应数据库表
+      "fileNameRules":["chatNumber","title"],
+      "objXpath": "//html",
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='main1']/text()",
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='navTitle']/text()",
+          
+        }
+      ]
+    }
+  },
+    "saveCapture": true,
+    "sleep": 5000,
+    "priority": 0,
+    "thread": 1,
+    "domain": "www.micai.com",
+    "retry": 2,
+    "timeout": 5000
+}

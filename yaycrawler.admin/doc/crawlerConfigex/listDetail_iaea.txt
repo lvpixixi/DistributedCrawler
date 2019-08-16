@@ -1,0 +1,60 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.iaea.org/news"],
+  "domain": "www.iaea.org",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='grid']/div/span/h4/a/@href",  
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src": "www.iaea.org",
+  "pagingModel": {
+      "startPage": 0,
+      "endPage": 0,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.iaea.org/news?page=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='left col-md-9 col-lg-7 col-lg-push-2']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='addthis_sharing_toolbox']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//h1[@class='page-header']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@class='news-story-date']/div/text()",
+          
+        }
+      ]
+    }
+  }
+}

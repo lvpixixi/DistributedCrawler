@@ -1,0 +1,67 @@
+{
+  "id":"www.eumetsat.int", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.eumetsat.int/website/home/News/index.html?Y=all&pState=1"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.eumetsat.int",
+	  "timeout": 15000,
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//ul[@id='galpage']/li/a/@href).all()",
+     	"pagingRules": ["paging(https://www.eumetsat.int/website/home/News/index.html?Y=all&pState=1&pN=pageNo$$pageNo$$1$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@id='content']/h4).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//p[@id='titleSignatureLabel']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@id='content']).get()",
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "summary",
+	          "remark":"摘要",
+	          "rule": "xpath(//div[@id='content']/h1/text()).get()",
+	        },
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//div[@id='content']/h4/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@id='content']/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

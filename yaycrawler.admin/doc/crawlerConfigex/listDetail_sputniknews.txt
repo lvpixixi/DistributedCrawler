@@ -1,0 +1,75 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://sputniknews.com/military/"],
+  "domain": "sputniknews.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='b-stories__info']/a/@href",  
+  "newsCategory":"俄罗斯新闻",
+  "dbType":"news_other",
+  "src":"sputniknews.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://sputniknews.com/military/?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='b-article__text']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='b-mainnav']",
+               			"//div[@class='b-sitenav']",
+               			"//div[@class='b-sitenav-all']",
+               			"//div[@class='b-header__nav']",
+               			"//div[@class='b-article__refs']",
+               			"//div[@class='b-article__refs-text']",
+               			"//div[@class='b-inject m-inject-min']",
+               			"//div[@class='b-article__likes js-likes']",
+               			"//div[@class='b-banner m-banner-33 m-mb20 m-mt10']",
+               			"//div[@class='l-wrap m-oh']",
+               			"//div[@class='l-sidebar']",
+               			"//div[@class='social-likes-pane m-clear social-likes social-likes_visible social-likes_ready social-likes-pane__fixed']",
+               			"//div[@class='taboola-banner']",
+               			"//div[@class='social-likes-pane__etc-popup']/div",
+               			"//section[@class='comments']",
+               			"//iframe"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='b-article__header-title ']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//time[@class='b-article__refs-date']/text()",
+          
+        }
+      ]
+    }
+  }
+}

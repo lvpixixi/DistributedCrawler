@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.spider.dao.KeywordsThesaurusMapper">
+	<insert id="insertThesaurus" parameterType="com.mss.crawler.custom.weapon.KeywordsThesaurus">
+		INSERT INTO keywords_thesaurus(thesaurusNum, thesaurusName, classifyNum) VALUES(#{thesaurusNum}, #{thesaurusName}, #{classifyNum})
+	</insert>
+	
+	<select id="getAllThesaurusNum4Trim" resultType="com.mss.crawler.custom.weapon.KeywordsThesaurus">
+		SELECT id, categoryNum FROM keywords_space_thesaurus
+	</select>
+	
+	<update id="trimThesaurusNum" parameterType="com.mss.crawler.custom.weapon.KeywordsThesaurus">
+		UPDATE keywords_space_thesaurus SET categoryNum = #{categoryNum} where id = #{id}
+	</update>
+	
+	<update id="batchUpdateKeywordsThesaurus" parameterType="com.mss.crawler.custom.weapon.KeywordsThesaurus">
+		        <!-- 接收list参数，循环着组装sql语句，注意for循环的写法
+             separator=";" 代表着每次循环完，在sql后面放一个分号
+             item="cus" 循环List的每条的结果集
+             collection="list" list 即为 map传过来的参数key -->
+        <foreach collection="list" separator=";" item="cus">
+            update keywords_space_thesaurus set
+	            upperWords = #{cus.upperWords}, lowerWords = #{cus.lowerWords}, 
+				referWords = #{cus.referWords}, formalWords = #{cus.formalWords}, 
+				informalWords = #{cus.informalWords}
+		 	where id = #{cus.id}
+        </foreach>
+	</update>
+	
+	<select id="getAllTargetFields" resultType="com.mss.crawler.custom.weapon.KeywordsThesaurus">
+		SELECT id, upperWords, downWords as lowerWords, moreWords as referWords FROM keywords_space_copy
+	</select>
+	
+	<update id="separateString2TargetFields" parameterType="map">
+		UPDATE keywords_space_thesaurus SET upperWords = #{upperWords}, lowerWords = #{lowerWords}, 
+		referWords = #{referWords}, formalWords = #{formalWords}, informalWords = #{informalWords}
+		where id = #{id}
+	</update>
+	
+</mapper>

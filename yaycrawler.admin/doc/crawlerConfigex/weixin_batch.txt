@@ -1,0 +1,123 @@
+﻿{
+  "userAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36",
+  "pageProcessorModel":"weixin",
+  "seedRex":"http://weixin.sogou.com/weixin?type=${type}&s_from=input&ie=utf8&query=${query}",  
+  "indexs":["小火箭",
+  			"航小宇",
+			"现代军事",
+			"桌面战争",
+			"天地一体化信息网络",
+			"知远战略与防务研究所",
+			"晨读航天",
+			"NASA中文",
+			"战略前沿技术",
+			"国防科技要闻",
+			"中国航天科技集团",
+			"太空网",
+			"中国指挥与控制学会",
+			"装备科技",
+			"中国军事网",
+			"中国军网",
+			"科罗廖夫的军事客厅",
+			"中国载人航天",
+			"航天防务",
+			"中国战略支援",
+			"交通安全应急国家工程实验室",
+			"航天长城",
+			"腾讯太空",
+			"5281服务平台",
+			"中国航天网",
+			"军情速递",
+			"电科防务研究",
+			"卫星与网络",
+			"卫星界",
+			"无人机",
+			"中国军事",
+			"国科环宇",
+			"卫星应用",
+			"国际太空",
+			"泰伯网",
+			"雷达通信电子战",
+			"信息与电子前沿"],
+  "targetUrlPatterns": [
+        "https://mp.weixin.qq.com/s/*"
+      ],
+  "extractorCfgs": {
+    "News": {
+      "objName": "News",
+      "fileNameRules":["chatNumber","title"],
+      "objXpath": "//html",
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='js_content']",
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@data-src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='img-content']/h2[@id='activity-name']/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubTime",
+          "fieldExtractorExp": "//em[@id='post-date']/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "publicName",
+          "fieldExtractorExp": "//div[@class='rich_media_meta_list']/a[@id='post-user']/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "chatNumber",
+          "fieldExtractorExp": "//div[@id='js_profile_qrcode']/div[@class='profile_inner']/p[1]/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "features",
+          "fieldExtractorExp": "//div[@id='js_profile_qrcode']/div[@class='profile_inner']/p[2]/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//div[@id='meta_content']/em[@id!='post-date' and @class='rich_media_meta rich_media_meta_text']/text()",
+          
+        }
+      ]
+    }
+  },
+  "saveCapture": true,
+  "sleep": 5000,
+  "startURL": [ 
+	"http://weixin.sogou.com/",
+  ],
+  "priority": 0,
+  "thread": 1,
+  "domain": "weixin.sogou.com",
+  "retry": 2,
+  "rootPath": "D:/data/webmagic/",
+  "pipelines":["ImgPipeline","Html2PdfPipeline"], 
+  "timeout": 5000
+}

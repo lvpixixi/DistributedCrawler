@@ -1,0 +1,66 @@
+{
+  "id":"spacenews.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://spacenews.com/segment/news/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "spacenews.com",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//h2[@class='launch-title']/a/@href).all()",
+     	"pagingRules": ["paging(https://spacenews.com/segment/news/page/pageNo$$pageNo$$1$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='share-this-mobile clearfix hide-for-print']).get()",
+	       		"xpath(//div[@class='tax-container']).get()",
+	       		"xpath(//div[@class='hide-for-print']).get()",
+	       		"xpath(//div[@class='content-ad']).get()",
+	       		"xpath(//iframe).get()",
+	       		"xpath(//form[@id='mc4wp-form-1']).get()",
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@class='post-title']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='clearfix']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//time/text()).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//figure[@class='featured wp-caption']/img/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

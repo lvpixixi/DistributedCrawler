@@ -1,0 +1,71 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.militaryaerospace.com/headlines.html"],
+  "domain": "www.militaryaerospace.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//tr[contains(@id, 'leftinheritedtop_standard_11_agg_row_')]/td/a/@href",  
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src": "www.militaryaerospace.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.militaryaerospace.com/headlines.${page}.leftinheritedtop_standard_11.html"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='ContentBody']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='ad-wrapper ']",
+               			"//div[@class='sponsoredArticle']",
+               			"//iframe"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='content-wrapper']/div/div/div/div/div/div[1]/div/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@id='content-wrapper']/div/div/div/div/div/div[2]/div[1]/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//div[@class='articleauthor']/a/span[2]/text() | //p/b/i/text()",
+          
+        }
+        
+      ]
+    }
+  }
+}

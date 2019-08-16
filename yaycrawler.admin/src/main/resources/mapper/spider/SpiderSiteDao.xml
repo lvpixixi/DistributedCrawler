@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.spider.dao.SpiderSiteDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.spider.entity.SpiderSiteEntity" id="spiderSiteMap">
+        <result property="id" column="id"/>
+        <result property="url" column="url"/>
+        <result property="siteName" column="site_name"/>
+        <result property="domain" column="domain"/>
+        <result property="charset" column="charset"/>
+        <result property="cycleRetryTimes" column="cycle_retry_times"/>
+        <result property="defaultCookies" column="default_cookies"/>
+        <result property="headers" column="headers"/>
+        <result property="retryTimes" column="retry_times"/>
+        <result property="sleepTime" column="sleep_time"/>
+        <result property="timeOut" column="time_out"/>
+        <result property="userAgent" column="user_agent"/>
+        <result property="loginJsFileName" column="login_js_file_name"/>
+        <result property="loginJudgeExpression" column="login_judge_expression"/>
+        <result property="note" column="note"/>
+        <result property="status" column="status"/>
+        <result property="rspCode" column="rsp_code"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.renren.modules.spider.entity.SpiderSiteEntity">
+		select * from spider_site where id = #{value}
+	</select>
+	
+	<select id="queryListByIds" resultType="io.renren.modules.spider.entity.SpiderSiteEntity">
+		select * from spider_site where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	
+	<select id="queryList" resultType="io.renren.modules.spider.entity.SpiderSiteEntity">
+		SELECT
+			* 
+		FROM
+			spider_site
+		<where>
+			<if test="project != null and project != 0">
+				spider_site.id IN ( SELECT site_id FROM spider_site_project WHERE spider_site_project.project_id = #{project} )
+			</if>
+			<if test="searchword != null and searchword.trim() != ''">
+				and (`site_name` like concat('%',#{searchword},'%')  or `domain` like concat('%',#{searchword},'%') )
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		SELECT
+			count( * ) 
+		FROM
+			spider_site 
+		<where>
+			<if test="project != null and project != 0">
+				spider_site.id IN ( SELECT site_id FROM spider_site_project WHERE spider_site_project.project_id = #{project} )
+			</if>
+			<if test="searchword != null and searchword.trim() != ''">
+				and (`site_name` like concat('%',#{searchword},'%')  or `domain` like concat('%',#{searchword},'%') )
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.modules.spider.entity.SpiderSiteEntity">
+		insert into spider_site
+		(
+			`id`, 
+			`url`, 
+			`site_name`, 
+			`domain`, 
+			`charset`, 
+			`cycle_retry_times`, 
+			`default_cookies`, 
+			`headers`, 
+			`retry_times`, 
+			`sleep_time`, 
+			`time_out`, 
+			`user_agent`, 
+			`login_js_file_name`, 
+			`login_judge_expression`,
+			`note`, 
+			`status`,
+			`rsp_code`
+		)
+		values
+		(
+			#{id}, 
+			#{url}, 
+			#{siteName}, 
+			#{domain}, 
+			#{charset}, 
+			#{cycleRetryTimes}, 
+			#{defaultCookies}, 
+			#{headers}, 
+			#{retryTimes}, 
+			#{sleepTime}, 
+			#{timeOut}, 
+			#{userAgent}, 
+			#{loginJsFileName}, 
+			#{loginJudgeExpression},
+			#{note}, 
+			#{status},
+			#{rspCode},
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.modules.spider.entity.SpiderSiteEntity">
+		update spider_site 
+		<set>
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="siteName != null">`site_name` = #{siteName}, </if>
+			<if test="domain != null">`domain` = #{domain}, </if>
+			<if test="charset != null">`charset` = #{charset}, </if>
+			<if test="cycleRetryTimes != null">`cycle_retry_times` = #{cycleRetryTimes}, </if>
+			<if test="defaultCookies != null">`default_cookies` = #{defaultCookies}, </if>
+			<if test="headers != null">`headers` = #{headers}, </if>
+			<if test="retryTimes != null">`retry_times` = #{retryTimes}, </if>
+			<if test="sleepTime != null">`sleep_time` = #{sleepTime}, </if>
+			<if test="timeOut != null">`time_out` = #{timeOut}, </if>
+			<if test="userAgent != null">`user_agent` = #{userAgent}, </if>
+			<if test="loginJsFileName != null">`login_js_file_name` = #{loginJsFileName}, </if>
+			<if test="loginJudgeExpression != null">`login_judge_expression` = #{loginJudgeExpression}, </if>
+			<if test="note != null">`note` = #{note}, </if>
+			<if test="status != null">`status` = #{status},</if>
+			<if test="rspCode != null">`rsp_code` = #{rspCode}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from spider_site where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from spider_site where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

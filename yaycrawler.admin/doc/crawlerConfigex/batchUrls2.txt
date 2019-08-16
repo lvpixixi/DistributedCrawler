@@ -1,0 +1,43 @@
+﻿{
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+  "pageProcessorModel":"batchUrls", 
+  "pipelines":["Html2PdfPipeline"], 
+  "indexFile":"D:/workspace_dir/workspace_pc/CrawlerNode/src/test/java/com/mss/crawler/demo/urls.txt",
+  "extractorCfgs": {
+    "news": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//div/div[@class='con']/div[@class='conLeft']/div[@class='conText']/h1/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='text']",
+					"excludeExp":{ "xpath":["//*[@id='pages']"]},					
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//*[@id='text']/div[@class='page']/div[@id='pages']/a/@href"
+			}
+		},
+  },
+  "saveCapture": true,
+  "sleep": 5000,
+  "startURL": [ 
+	"http://mil.huanqiu.com"
+  ],
+  "priority": 0,
+  "thread": 1,
+  "domain": "mil.huanqiu.com",
+  "retry": 2,
+  "rootPath": "D:/data/webmagic/",
+  "timeout": 5000
+}

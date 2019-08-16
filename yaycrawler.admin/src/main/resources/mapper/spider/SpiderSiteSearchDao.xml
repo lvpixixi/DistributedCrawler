@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.spider.dao.SpiderSiteSearchDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.spider.entity.SpiderSiteSearchEntity" id="spiderSiteSearchMap">
+        <result property="id" column="id"/>
+        <result property="searchName" column="search_name"/>
+        <result property="keyWord" column="key_word"/>
+        <result property="searchTime" column="search_time"/>
+        <result property="useEngine" column="use_engine"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.renren.modules.spider.entity.SpiderSiteSearchEntity">
+		select * from spider_site_search where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.modules.spider.entity.SpiderSiteSearchEntity">
+		select * from spider_site_search
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from spider_site_search 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.modules.spider.entity.SpiderSiteSearchEntity">
+		insert into spider_site_search
+		(
+			`id`, 
+			`search_name`, 
+			`key_word`, 
+			`search_time`, 
+			`use_engine`
+		)
+		values
+		(
+			#{id}, 
+			#{searchName}, 
+			#{keyWord}, 
+			#{searchTime}, 
+			#{useEngine}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.modules.spider.entity.SpiderSiteSearchEntity">
+		update spider_site_search 
+		<set>
+			<if test="searchName != null">`search_name` = #{searchName}, </if>
+			<if test="keyWord != null">`key_word` = #{keyWord}, </if>
+			<if test="searchTime != null">`search_time` = #{searchTime}, </if>
+			<if test="useEngine != null">`use_engine` = #{useEngine}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from spider_site_search where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from spider_site_search where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

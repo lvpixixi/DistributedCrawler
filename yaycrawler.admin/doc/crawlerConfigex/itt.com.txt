@@ -1,0 +1,62 @@
+{
+  "userAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36",
+  "pageProcessorModel":"listAndDetail",
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "extractorCfgs": {
+    "News": {
+      "objName": "News",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,     
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='news-detail']",
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+              
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='news-detail']/h1/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubTime",
+          "fieldExtractorExp": "//div[@id='news-detail']/p[@class='news-date']/text()",
+          
+        }
+      ]
+    }
+  },
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 5,
+      "pagingType": "rule",
+      "pageNumRules": "http://itt.com/newsroom/news-releases?page=${page}"
+    },
+  "saveCapture": true,
+  "sleep": 5000,
+  "startURL": [ 
+	"http://itt.com/newsroom/news-releases",
+  ],
+  "listHrefXPath":"//div[@id='news-listing']/div[@class='news-item']/h4/a/@href",
+  "priority": 0,
+  "thread": 1,
+  "domain": "itt.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "timeout": 5000
+}

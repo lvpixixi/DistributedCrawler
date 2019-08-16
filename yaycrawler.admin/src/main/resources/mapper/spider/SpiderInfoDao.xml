@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<mapper namespace="io.renren.modules.spider.dao.SpiderInfoDao">
+	<select id="queryObject" resultType="io.renren.modules.spider.entity.SpiderInfo">
+		select * from spider_info where id = #{id}
+	</select>
+	
+	<select id="queryList" parameterType="map" resultType="io.renren.modules.spider.entity.SpiderInfo">
+		select * from spider_info 		
+		<where>
+			<if test="project != null and project != 0">
+				and `json_project` like concat('%"',#{project},'"%')
+			</if>
+			<if test="searchword != null and searchword.trim() != ''">
+				and (`site_name` like concat('%',#{searchword},'%')  or `domain` like concat('%',#{searchword},'%') )
+			</if>
+		</where>
+		<choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryTotal" parameterType="map" resultType="int">
+		select count(*) from spider_info 
+		<where>
+			<if test="project != null and project != 0">
+				and `json_project` like concat('%"',#{project},'"%')
+			</if>
+			<if test="searchword != null and searchword.trim() != ''">
+				and (`site_name` like concat('%',#{searchword},'%')  or `domain` like concat('%',#{searchword},'%') )
+			</if>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="io.renren.modules.spider.entity.SpiderInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into spider_info(`id`, `url`,`site_id`,`site_name`, `domain`, `json_data`,`json_project`,`create_time`)
+			values(#{id},#{url},#{siteId},#{siteName},#{domain},#{jsonData},#{jsonProject},#{createTime})
+	</insert>
+	
+	
+	<update id="update" parameterType="io.renren.modules.spider.entity.SpiderInfo">
+		update spider_info 
+		<set> 
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="siteId != null">`site_id` = #{siteId}, </if>
+			<if test="siteName != null">`site_name` = #{siteName}, </if>
+			<if test="domain != null">`domain` = #{domain}, </if>
+			<if test="createTime != null">`create_time`= #{createTime}, </if>
+			<if test="jsonData != null">`json_data` = #{jsonData}</if>
+		</set>
+		 where id = #{id}
+	</update>
+	<delete id="deleteBatch" parameterType="string">
+		delete from spider_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,59 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://news.lockheedmartin.com/news-releases"],
+  "domain": "news.lockheedmartin.com",
+  "retry": 3,
+  "step": 5,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='wd_title']/a/@href",
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",  
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://news.lockheedmartin.com/news-releases?o=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='wd_body wd_news_body']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='wd_body wd_news_body']/p[1]"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='wd_title wd_language_left']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//span[@class='xn-chron']/text()",
+        }
+      ]
+    }
+  }
+}

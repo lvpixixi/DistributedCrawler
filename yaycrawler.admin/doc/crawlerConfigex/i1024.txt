@@ -1,0 +1,50 @@
+﻿{
+    "userAgent": "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30",
+    "extractorCfgs": [
+        {
+            "objName": "picture",
+            "objXpath": "//th[@id='td_tpc']",
+            "multi": false,
+            "targetUrlPatterns": [
+                "http://1024.97luhi.click/pw/htm_data/[0-9]{1,2}/[0-9]{1,4}/[0-9]{1,6}.html"
+            ],
+            "helpUrlPatterns": [
+                "http://1024.97luhi.click/pw/thread.php?fid=14&page=[0-9]{1,4}"
+            ],
+            "fieldCfgs": [
+               
+                {
+                    "sourceType": "newstext",
+                    "fieldExtractorType": "html",
+                    "fieldName": "content",
+                    "fieldExtractorExp": "//div[@id='read_tpc']",
+                    "innerFileConfigs": [
+                        {
+                            "resourceName": "image",
+                            "resourceRegionExp": "//img/@src",
+                            "multi": true,
+                            
+                        }
+                    ]
+                    
+                },
+                {
+                	"sourceType": "rawtext",
+                    "fieldExtractorType": "html",
+                    "fieldName": "title",
+                    "fieldExtractorExp": "//h1[@id='subject_tpc']",
+                }
+            ]
+        }
+    ],
+    "saveCapture": true,
+    "sleep": 5000,
+    "startURL": [
+        "http://1024.97luhi.click/pw/thread.php?fid=14"
+    ],
+    "priority": 0,
+    "thread": 1,
+    "domain": "http://news.ifeng.com",
+    "retry": 2,
+    "timeout": 5000
+}

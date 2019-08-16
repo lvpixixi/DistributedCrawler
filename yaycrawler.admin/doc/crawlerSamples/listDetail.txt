@@ -1,0 +1,81 @@
+﻿{
+  "pageProcessorModel":"listAndDetail",                      //页面解析模型： batchUrls：批量Url采集处理模型 ,site：通用网站处理模型,subject:百度新闻处理模型，weixin：微信新闻处理模型，listAndDetail：列表详情采集模型
+  "pipelines":["NewsTranslate2DBPipeline","ImgPipeline"],   //管道配置，NewsDBPipeline：数据库存储管道；Html2PdfPipeline：html文件存储管道；ImgPipeline：图片存储管道；
+  "startURL": [ "https://www.space.com/news/"],              //开始url列表
+  "domain": "www.space.com",                                 //域名
+  "retry": 3,                                                //爬取失败重试次数
+  "rootPath": "D:/data/webmagic/",                           //文件存储根路径
+  "listHrefXPath":"//div[@class='contentListing']/ul/li/a/@href",    //列表href抽取, 此处有 3 个选项:listHrefRegex(1) listHrefJsonPath(2) listHrefXPath(3)
+  "newsCategory":"中文新闻",									 // 对应的新闻分类
+  "dbType":"news_cn",										 // 对应的索引库的名称
+  "pagingModel": {                                           //分页模型配置
+      "startPage": 1,                                        //开始页 
+      "endPage": 1,                                          //终止页
+      "pagingType": "rule", 								 //分页类型，rule：基于规则分页
+      "step": 5,                                 			 //步长: 部分的网站的分页是基于步长来进行的, targetNum = step * currentPageNo
+      "pageNumRules": "https://www.space.com/news/${page}"   //分页表达式
+  },
+  "extractorCfgs": {                                         //抽取对象配置
+    "News": {                                                //抽取对象Key值，解析对象时使用
+      "objName": "news_en",                                     //抽取对象名称 ，对应数据库表
+      "objXpath": "//html",                                  //对象抽取xpath根路径，缺省配置：//html
+      "fileNameRules":["title"],                             //主键生成规则
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='content-block']",
+          "excludeRegionExp": {                              //排除内容的xpath表达式
+               "xpath":[                                     //基于xpath排除内容
+               			"//div[@id='content-block']/ul[@class='breadcrumb']",
+               			"//div[@id='content-block']/h1",
+               			"//div[@id='content-block']/div[@class='byline']",
+               			"//div[@class='mod top-mod partner-banner']",
+               			"//div[@id='stickyShare']",
+               			"//div[contains(@class, 'jw-loaded')]",
+               			"//div[@id='in-article-1']", 
+               			"//div[@class='youtube-container']",
+               			"//div[@id='content-block']/h1",
+               			"//div[@id='below_article']",
+               			"//iframe",
+               			"//section[@class='purch-related']",
+               			"//div[@id='rev_content_placeholder']",
+               			"//div[@id='content-block']/div[2]/div[2]/div[2]/p/em",
+               			"//dd[@class='social-byline']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='content-block']/h1/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@id='content-block']/div[@class='byline']/time/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//div[@id='content-block']/div[@class='byline']/span/text()",
+          
+        }
+      ]
+    }
+  }
+}

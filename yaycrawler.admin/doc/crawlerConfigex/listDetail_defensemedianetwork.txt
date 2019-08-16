@@ -1,0 +1,73 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.defensemedianetwork.com/sections/military-security-news/"],
+  "domain": "www.defensemedianetwork.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//article[@class='article-block']/h2/a/@href",  
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src": "www.defensemedianetwork.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.defensemedianetwork.com/sections/military-security-news/page/${page}/"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='main']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//h1[@class='main-heading']",
+               			"//p[@class='author-byline']",
+               			"//div[@class='share-meta-boxes']",
+               			"//div[@class='post-advertisement']",
+               			"//div[@class='author-share-boxes']",
+               			"//ins[@class='adsbygoogle']",
+               			"//div[@id='comments-tab-wrapper']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//h1[@class='main-heading']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//p[@class='author-byline']/span/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//a[@class='author url fn']/text()",
+          
+        }
+      ]
+    }
+  }
+}

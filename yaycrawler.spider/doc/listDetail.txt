@@ -1,0 +1,73 @@
+{
+  "id":"reli.cssn.cn", 
+  "spiderConf":{
+ 	  "startURL": [ "http://reli.cssn.cn/zjx/zjx_zjyj/zjx_zjxll/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "reli.cssn.cn",
+	  "timeout": 5000
+  },
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(div[@class='ImageListView']/ol/li/a/@href).all()",
+     	"pagingRules": ["paging(http://reli.cssn.cn/zjx/zjx_zjyj/zjx_zjxll/index_page.shtml$$page$$1$$4)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news",
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false,     
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(span[@class='TitleFont']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(div[@class='TRS_Editor']).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "作者",
+	          "fieldName": "author",
+	          "rule": "xpath(span[@id='js_author_name']/text()).get()"
+	        },	     
+	        {
+	          "valueType": "String",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(div[@class='TitleFont2']/text()).get()"
+	        },    
+	        {
+	          "valueType": "Resource",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(div[@class='TRS_Editor']/img/@src).all()"
+	        }
+	      ]
+	    },
+	  {
+ 		"objName": "news_image",
+ 		"objXpath": "//html",
+ 		"dataType":"IMG",
+ 		"multi": false,     
+ 		"fieldParseRules": [
+	        {
+	          "valueType": "Resource",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(div[@id='TRS_Editor']/img/@data-src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

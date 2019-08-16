@@ -1,0 +1,55 @@
+﻿{
+  "id":"weixin.sogou.com", 
+  "spiderConf":{
+ 	 "startURL": [ 
+		"http://weixin.sogou.com/weixin?type=2&s_from=input&ie=utf8&query=于欢案"
+	  ],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "weixin.sogou.com",
+	  "timeout": 5000
+  },
+  "pageProcessorConf":{
+  	 "name":"WeixinArticle",
+     "mapConf":{
+        "pages":2,
+     	"targetUrlPatterns": [
+     		"https://mp.weixin.qq.com/s/*"
+     	]
+     },
+  	 "extractors": [
+	  	 	{
+	 		"objName": "DetailInfo",	 		
+	 		"objXpath": "//html",
+	 		"dataType":"MAP",
+	 		"multi": false,     
+	 		"fieldParseRules": [
+	        {
+	          "valueType": "String",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(div[@id='js_content']).get()"
+	        }, 
+	        {
+	          "valueType": "String",
+	          "remark": "作者",
+	          "fieldName": "author",
+	          "rule": "xpath(span[@id='js_author_name']/text()).get()"
+	        },	        
+	        {
+	          "valueType": "Resource",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(div[@id='js_content']/p/img/@data-src).all()"
+	        },	        
+	        {
+	          "valueType": "String",
+	          "remark": "应用名",
+	          "fieldName": "appID",
+	          "rule": "constant(fayuan)"
+	        }
+	      ]
+	    }]
+  }
+}

@@ -1,0 +1,37 @@
+﻿{
+	"id": "news.baidu.com",
+	"spiderConf": {
+		"pageProcessorModel": "subject",
+		"startURL": [
+			"http://news.baidu.com/"
+		],
+		"thread": 1,
+		"retry": 2,
+		"rootPath": "D:/data/webmagic/",
+		"domain": "news.baidu.com",
+		"timeout": 5000
+	},
+	"pageProcessorConf": {
+		"name": "subject",
+		"mapConf": {
+			"seedRex": [
+				 "http://news.baidu.com/ns?word=${keyword}&pn=${index}&cl=2"
+			],
+			"indexs"["","","",""]
+		},
+		"extractors": [{
+				"objName": "weixin_list",
+				"fileNameRules": ["chatNumber", "title"],
+				"objXpath": "//html",
+				"dataType": "MAP",
+				"multi": false,
+				"fieldParseRules": [{
+						"valueType": "string",
+						"remark": "网站",
+						"fieldName": "site",
+						"rule": "xpath(div[@class='profile_info']/p/text()).get()"
+					}	
+				]
+			}]
+	}
+}

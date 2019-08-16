@@ -1,0 +1,71 @@
+{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsDBPipeline"],
+  "startURL": [ "http://news.ifeng.com/listpage/16874/1/list.shtml"],
+  "domain": "news.ifeng.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='box_list clearfix']/h2/a/@href",
+  "newsCategory":"中文新闻",
+  "dbType":"news_cn",  
+  "src":"凤凰军事",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://news.ifeng.com/listpage/16874/1/list.shtml?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_cn",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='main_content'] | //div[@id='yc_con_txt']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@id='embed_hzh_div']",
+               			"//div[@class='video_box ss_none ipad_block iphone_block']",
+               			"//span[@class='ifengLogo']",
+               			"//audio[@controls='controls']",
+               			"//div[@class='box02']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//h1[@id='artical_topic']/text() | //div[@class='yc_tit']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//span[@class='ss01']/text() | //div[@class='yc_tit']/p/span[1]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "sourceSite",
+          "fieldExtractorExp": "//span[@itemprop='publisher']/span/a/@href",
+          
+        }
+      ]
+    }
+  }
+}

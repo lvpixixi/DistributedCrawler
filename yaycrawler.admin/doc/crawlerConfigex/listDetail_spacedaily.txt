@@ -1,0 +1,69 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.spacedaily.com/"],
+  "domain": "www.spacedaily.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//span/a[@class='fullstory']/@href",  
+  "newsCategory":"澳洲新闻",
+  "dbType":"news_other",
+  "src":"www.spacedaily.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.spacedaily.com/?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='BTX KonaBody']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//span[@class='BDL']",
+               			"//ins[@class='adsbygoogle']",
+               			"//span[@class='BL']",
+               			"//span[@class='BHB']",
+               			"//span[@class='BDL']",
+               			"//span[@class='BNTX']",
+               			"//a[@class='fullstory']",
+               			"//a[@class='basket']",
+               			"//table[@width='630']",
+               			"//table[@width='810']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//span[@class='BHSBX']/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//span[@class='BDL']/text()",
+          
+        }
+      ]
+    }
+  }
+}

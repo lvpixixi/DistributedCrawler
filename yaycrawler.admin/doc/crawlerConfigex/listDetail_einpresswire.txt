@@ -1,0 +1,66 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.einpresswire.com/channel/aviation-aerospace"],
+  "domain": "www.einpresswire.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//ul[@class='pr-feed']/li/div/h3/a/@href", 
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src": "www.einpresswire.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.einpresswire.com/channel/aviation-aerospace?page=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='article_column imported']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='pr_quote']",
+               			"//div[@class='pr_quote_positioner']",
+               			"//p[@class='contact']",
+               			"//p[@class='pr_video_title']",
+               			"//p[@class='pr_video']",
+               			"//div[@class='social_icon']",
+               			"//div[@class='channels']",
+               			"//iframe"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='pr-lw press_release']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@class='article_column imported']/p[1] | //div[@id='main-column-content']/div[2]/div[1]/div[1]/p[1]/text() | //div[@class='mw_release']/p[1]/text()",
+        }
+      ]
+    }
+  }
+}

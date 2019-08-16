@@ -1,0 +1,87 @@
+﻿{
+	"id": "weixin.sogou.com",
+	"spiderConf": {
+		"pageProcessorModel": "weixin",
+		"startURL": [
+			"http://weixin.sogou.com/weixin?type=1&s_from=input&ie=utf8&query=环球网"
+		],
+		"thread": 1,
+		"retry": 2,
+		"rootPath": "D:/data/webmagic/",
+		"domain": "weixin.sogou.com",
+		"timeout": 5000
+	},
+	"pageProcessorConf": {
+		"name": "weixin",
+		"mapConf": {
+			"targetUrlPatterns": [
+				"https://mp.weixin.qq.com/s/*"
+			]
+		},
+		"extractors": [{
+				"objName": "weixin_list",
+				"fileNameRules": ["chatNumber", "title"],
+				"objXpath": "//html",
+				"dataType": "MAP",
+				"multi": false,
+				"fieldParseRules": [{
+						"valueType": "String",
+						"remark": "微信公众号",
+						"fieldName": "chatNumber",
+						"rule": "xpath(div[@class='profile_info']/p/text()).get()"
+					},
+					{
+						"valueType": "String",
+						"remark": "微信公众号名称",
+						"fieldName": "nickName",
+						"rule": "xpath(div[@class='profile_info']/strong/text()).get()"
+					},
+					{
+						"valueType": "File",
+						"remark": "公众号头像",
+						"fieldName": "avatar",
+						"rule": "xpath(span[@class='profile_avatar']/img/@src).get()"
+					},
+					{
+						"valueType": "String",
+						"remark": "公众号介绍",
+						"fieldName": "introduce",
+						"rule": "xpath(div[@class='profile_desc_value']/@title).get()"
+					},
+					{
+						"valueType": "File",
+						"remark": "公众号二维码图片",
+						"fieldName": "qr_code",
+						"rule": "xpath(img[@id='js_pc_qr_code_img']/@src).get()"
+					}
+				]
+			},
+			{
+				"objName": "weixin",
+				"pks": ["title"],
+				"objXpath": "//div[@id='js_content']",
+				"dataType": "MAP",
+				"multi": false,
+				"fieldParseRules": [{
+						"valueType": "Html",
+						"fieldName": "content",
+						"remark": "内容",
+						"rule": "xpath(div[@id='js_content']).get()"
+					},
+					{
+						"valueType": "String",
+						"remark": "作者",
+						"fieldName": "author",
+						"rule": "xpath(span[@id='js_author_name']/text()).get()"
+					},
+					{
+						"valueType": "File",
+						"remark": "内容页图片列表",
+						"fieldName": "images",
+						"rule": "xpath(img/@data-src).all()"
+					}
+				]
+			}
+		]
+	}
+}

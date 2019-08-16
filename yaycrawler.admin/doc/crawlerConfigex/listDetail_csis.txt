@@ -1,0 +1,65 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.csis.org/analysis"],
+  "domain": "www.csis.org",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='teaser__title']/a/@href",  
+  "pagingModel": {
+      "startPage": 0,
+      "endPage": 0,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.csis.org/analysis?page=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@class='layout-detail-page__main']/article[@role='article']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='layout-detail-page__main']/article[@role='article']/h1",
+               			"//div[@class='layout-detail-page__main']/article[@role='article']/p[1]"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@class='layout-detail-page__main']/article[@role='article']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@class='layout-detail-page__main']/article[@role='article']/p[1]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//article[@class='teaser teaser--portrait-image']/div[@class='teaser__title']/a/text()",
+          
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,468 @@
+﻿{
+  "pageProcessorModel":"subject",                                        //页面解析模型： batchUrls：批量Url采集处理模型 ,site：通用网站处理模型,subject:百度新闻处理模型，weixin：微信新闻处理模型，listAndDetail：列表详情采集模型
+  "pipelines":["NewsDBPipeline","ImgPipeline","Html2PdfPipeline"],       //管道配置，NewsDBPipeline：数据库存储管道；Html2PdfPipeline：html文件存储管道；ImgPipeline：图片存储管道；
+  "pageSize":5,                                                          //翻页深度
+  "startURL": [ 
+	"http://news.baidu.com/ns?word=%E5%A4%A9%E5%9F%BA&pn=0&cl=2" 
+  ],
+  "thread": 1,                       //线程数
+  "retry": 2,                        //爬取失败重试次数
+  "rootPath": "D:/data/webmagic/",   //文件存储根路径
+  "domain": "news.baidu.com",        //域名
+  "timeout": 5000,                   //请求超时时间
+  "seedRex": [    
+        "http://news.baidu.com/ns?word=${keyword}&pn=${index}&cl=2"      //种子表达式
+      ],
+  "indexFile":"E:/源码/java/renren-fast/doc/crawlerConfigex/q.txt",        //索引文件位置
+  "listHrefXPath":"//div[@class='result']/h3/a/@href",                    //列表href抽取  
+  "extractorCfgs": {													  //抽取对象配置
+		"mil.sohu.com": {                                                 //抽取对象Key值，解析对象时使用
+			"objName": "News",                                            //抽取对象名称 ，对应数据库表
+			"fieldList": [{
+					"sourceType": "rawtext",                              //处理类型：rawtext：原始类型，不做处理；newstext：新闻类型，需要处理图片，格式化内容；datetext：日期类型，需要转成日期格式。
+					"fieldName": "title",                                 //字段名称
+					"fieldExtractorExp": "//*[@id='contentA']/div[@class='left']/h1/text()"   //字段xpath表达式
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='contentA']/div[@class='left']/div[@class='timeFun clear']/div[@class='l']/div[@class='time']/text() | //div[@class='time-source']/div[@id='pubtime_baidu']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='contentText'] | //*[@id='sohu_content']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//*[@id='contentText']/table/tbody/tr/td[@align='center']/a/@href"
+			}
+		},
+		"world.huanqiu.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//div/div[@class='con']/div[@class='conLeft']/div[@class='conText']/h1/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//div[@class='conLeft']/div[@class='conText']/div[@class='summary']/strong[1]/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='text']",
+					"excludeExp":{ "xpath":["//*[@id='pages']"]},					
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//*[@id='text']/div[@class='page']/div[@id='pages']/a/@href"
+			}
+		},
+		"news.163.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='epContentLeft']/h1//text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='epContentLeft']/div[@class='post_time_source']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//div[@id='endText']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"news.sina.com.cn": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "/html/body/center/table[4]/tbody/tr[@valign='top']/td[@valign='top']/center[1]/font/b/text() | //*[@id='artibodyTitle']/text() | //div[@id='article']/table/tbody/tr/th/font/h1/text() | //*[@id='main_title']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "/html/body/center/table[4]/tbody/tr[@valign='top']/td[@valign='top']/center[2]/font[@face='Arial']/text() | //*[@id='navtimeSource']/text() | //div[@id='article']/table/tbody/tr[3]/td/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "/html/body/center/table[4]/tbody/tr[@valign='top']/td[@valign='top']/p | /html/body/center/center/table[@width='750']/tbody/tr[@valign='top']/td[@width='520']/p | //*[@id='artibody'] | //div[@id='article']/table/tbody/tr/td[@class='l17']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"news.cntv.cn": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='top_title']/h1/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='top_title']/p[@class='art-info']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='content_body'] | //*[@id='page1'] | //*[@id='content']/div[@class='body'] | //div[@class='wrapper']/div[@class='col_w660']/div[@class='cnt_bd']",
+					"excludeExp":{ "cssquery":["function,o-tit"]},	
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"money.163.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='epContentLeft']/h1/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='epContentLeft']/div[@class='post_time_source']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='endText']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"war.163.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='h1title']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='js-epContent']/div[@class='ep-content-bg clearfix']/div[@class='ep-content-main']/div[@class='clearfix']/div[@class='ep-info cDGray']/div[@class='left']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='endText'] | //*[@id='articleBody']/div[@class='article-body']",
+					"excludeExp":{ "cssquery":["gg200x300,ep-source cDGray"]},	
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//*[@id='text']/div[@class='page']/div[@id='pages']/a/@href"
+			}
+		},
+		"news.qq.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='ArticleTit']/text() | //div/div[@class='hd']/h1/text() | //div/div[@class='hd']/h1/span/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='ArticleFrom']/text() | //span[@class='a_time']/text() | //span[@class='article-time']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='Cnt-Main-Article-QQ'] | //*[@id='Main-A'] | //*[@id='ArticleCnt'] | //div[@class='maincontent']",
+					"removeDom":{
+	                    "id":"Reading,PicInPic",
+	                    "attrClass":"ab_pos_div",
+	                    "tagName":"table"
+	                },
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//div[@id='ArticlePageLinkB']/a/@href"
+			}
+		},
+		"news.xinhuanet.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='Title']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//td[@class='black14']/font[@id='Zoom'] | //div[@class='mail']/div[@class='mail_left']/div[@class='css_txt']/table[4]/tbody/tr[2]/td/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//div[@class='p-right left']/*[@id='p-detail'] |//*[@id='Content'] | //*[@id='article']/div[@class='article']",
+					"removeDom":{
+	                    "id":"div_currpage"
+	                },
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//div/center/div[@id='div_currpage']/a/@href | //*[@id='Zoom']/p[@class='pagelink']/a/@href"
+			}
+		},
+		"news.sohu.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//div[@class='content-box clear']/h1/text() | //div[@class='lc']/div[@class='article_area']/h1/text() | //table/tr/td[@align='center']/font/b/text() | //div[@id='contentA']/div[@class='left']/h1/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td/*/table[1]/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/text() | //div[@class='lc']/div[@class='article_area']/div[@class='article_info']/div[@class='date']/span[@class='c']/text() | /html/body/center/table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td/table[1]/tbody/tr[1]/td/text() | //div[@class='sourceTime']/div[@class='r']"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='fontzoom'] | //*[@id='sohu_content'] | //table/tbody/tr/td[@class='cn1'] | //div[@id='contentText']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"news.eastday.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='biaoti']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='pubtime_baidu']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='zw'] | //tbody/tr/td[@width='601']/table/tbody/tr[4]/td[@class='14pix'] | //tbody/tr/td[@valign='top']/table[@width='530']/tbody/tr[2]/td[@class='14n1'] | //*[@id='fontzoom'] | //tbody/tr/td[@align='center']/table[@width='90%']/tbody/tr[3]/td[@align='left'] | //tbody/tr/td/table[@width='95%']/tbody/tr[5]/td[@class='hei14'] | //td/table/tbody/tr/td[@align='middle']/table[@width='90%']/tbody/tr/td/table/tbody/tr[3]/td[@class='bigtext'] | //*[@id='tb1']/table[@width='95%']/tbody/tr[8]/td[@align='left'] | //td/table/tbody/tr/td[@width='680']/table[@width='100%']/tbody/tr/td[@align='center']/table[@width='90%']/tbody/tr[3]/td[@align='left'] | //table[@width='100%']/tbody/tr/td[@align='middle']/table[@width='90%']/tbody/tr[3]/td[@class='bigtext']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"tech.sina.com.cn": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='artibodyTitle']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='pub_date']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='artibody'] | //*[@id='zoom'] | //tr/td[@width='620']/table[@width='560']/tbody/tr[5]/td[@class='l17'] | //table[@width='750']/tbody/tr[@valign='top']/td[@width='520'] | //table[@width='750']/tr[@valign='top']/td[@width='520']",
+					"removeDom":{
+	                    "id":"_function_code_page",
+	                    "attrClass":"com_blk,blk-video,contentPlayer,pagebox,title12,title14,Mblk_11 blkCommentBox,linkBlack",
+	                    "tagName":"table"
+	                },
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//*[@id='_function_code_page']/span/a/@href | //*[@id='_function_code_page']/p[@align='right']/a/@href"
+			}
+		},
+		"mil.news.sina.com.cn": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='pl_main_content']/h1[@id='main_title']/text() | //div[@class='blkContainerSblk']/h1[@id='artibodyTitle']/text() | //*[@id='article']/table/tbody/tr[1]/th/font/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='article']/table/tbody/tr[3]/td/text() | //*[@id='pub_date']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//table[@width='750']/tbody/tr[1]/td[@width='499']/table[@cellpadding='4']/tbody/tr/td[@class='title14'] | //table[@width='980']/tbody/tr/td[@class='lc_blue']/div[@id='artibody'] | //center/table[@width='760']/tbody/tr[2]/td[@width='564']/table[@width='500']/tbody/tr/td | //td[@width='620']/table[@width='560']/tbody/tr[5]/td[@class='l17'] | //div[@class='lcBlk']/div[@id='artibody'] | //div[@class='content_wrappr_left']/div[@id='artibody'] | //div[@class='blkContainerSblk']/div[@id='artibody']/p | //*[@id='article']/table/tbody/tr[5]/td | //center/table[@width='750']/tbody/tr[@valign='top']/td[@valign='top'] | //tbody/tr[1]/td[@valign='top']/table[@width='560']/tbody/tr[@class='l17']/td | //tbody/tr[1]/td[@valign='top']/table[@width='560']/tbody/tr[@class='l17']/p",
+					"removeDom":{
+	                    "id":"J_Play_List_Wrap",
+	                    "attrClass":"a-p-hd"
+	                },
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//td[@class='l17']/font[@id='zoom']/center[9]/a/@href"
+			}
+		},
+		"military.china.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//*[@id='chan_newsTitle']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='chan_newsInfo']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='chan_newsDetail'] | //font[@id='zoom'] | //*[@id='articleMod']/div[@class='content'] | //font[@color='#000000']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//div[@id='chan_multipageNumN']/a[@class='allPage']/@href"
+			}
+		},
+		"finance.ifeng.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "//h1[@id='artical_topic']/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//div[@id='artical_sth']/p[@class='p_time']/span[@class='ss01']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='main_content']",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			]
+		},
+		"finance.ifeng.com": {
+			"objName": "News",
+			"fieldList": [{
+					"sourceType": "rawtext",
+					"fieldName": "title",
+					"fieldExtractorExp": "/html/body/div[@class='main']/div[@class='mainCon']/div[@class='con']/div[@class='conLeft']/div[@class='conText']/h1/text()"
+				},
+				{
+					"sourceType": "rawtext",
+					"fieldName": "pubTime",
+					"fieldExtractorExp": "//*[@id='pubtime_baidu']/text()"
+				},
+				{
+					"sourceType": "newstext",
+					"fieldName": "content",
+					"fieldExtractorExp": "//*[@id='text'] | //div[@class='mainCon']/div[@class='conText'] | //div[@class='ct']/div[@class='main']/div[@class='text']/p",
+					"innerFileConfigs": [{
+						"resourceName": "image",
+						"resourceRegionExp": "//img/@src",
+						"multi": true
+	
+					}]
+				}
+			],
+			"pagingModel": {
+				"pagerXpath": "//div[@class='main']/div[@class='text']/div[@class='page']/a/@href"
+			}
+		}
+		
+  }
+}

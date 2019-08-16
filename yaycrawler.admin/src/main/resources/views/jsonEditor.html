@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>JSON在线编辑</title>
+
+  <!-- when using the mode "code", it's important to specify charset utf-8 -->
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+  <link href="bejson/css/jsoneditor.css" rel="stylesheet" type="text/css">
+  <script src="libs/jquery.min.js"></script>
+  <script src="bejson/js/jsoneditor.js"></script>
+
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+
+    #jsoneditor1{
+      width: 500px;
+      height: 1000px;
+      margin-right: 10px;
+      display: inline-block;
+    }
+    #jsoneditor2 {
+      width: 746px;
+      height: 1000px;
+      margin-right: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<p>
+  <button id="save">保存JSON</button>
+  <button id="execute">执行抓取</button>
+</p>
+<div id="jsoneditor1"></div>
+<div id="jsoneditor2"></div>
+
+<script>
+  // create editor 1
+  
+  //登录token
+  var token = localStorage.getItem("token");
+  
+  //jquery全局配置
+  $.ajaxSetup({
+  	dataType: "json",
+  	cache: false,
+      headers: {
+          "token": token
+      },
+      xhrFields: {
+  	    withCredentials: true
+      },
+      complete: function(xhr) {
+          //token过期，则跳转到登录页面
+          if(xhr.responseJSON.code == 401){
+              windows.close();
+          }
+      }
+  });
+  
+  //请求前缀
+  var baseURL = "/BSCrawler/";
+  var options1 = {
+    mode: 'code',
+    modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
+    onError: function (err) {
+      alert(err.toString());
+    }
+  };
+  
+  var editor1 = new JSONEditor(document.getElementById('jsoneditor1'),options1);
+
+  var options2 = {
+		    mode: 'code'
+  };
+  // create editor 2
+  var editor2 = new JSONEditor(document.getElementById('jsoneditor2'),options1);
+
+
+  
+//get json
+  document.getElementById('save').onclick = function () {
+    var text = editor1.getText();
+    $.ajax({
+		type: "POST",
+	    url: baseURL + "spiderInfo/update",
+        contentType: "application/json",
+	    data: JSON.stringify({id:spiderInfoId,jsonData:text}),
+	    success: function(r){
+	    	if(r.code === 0){
+				alert('保存成功');
+			}else{
+				alert(r.msg);
+			}
+		}
+	});
+  };
+  
+  document.getElementById('execute').onclick = function () {
+	  $.ajax({
+			type: "POST",
+		    url: baseURL + "spider/testSpiderInfo",
+            contentType: "application/json",
+            data: JSON.stringify([spiderInfoId]),
+		    success: function(r){
+		    	if(r.code === 0){
+		    		editor2.set(r.records);
+				}else{
+					alert(r.msg);
+				}
+			}
+		});
+  };
+  
+  function GetUrlParam(paraName) {
+　　　　var url = document.location.toString();
+　　　　var arrObj = url.split("?");
+
+　　　　if (arrObj.length > 1) {
+　　　　　　var arrPara = arrObj[1].split("&");
+　　　　　　var arr;
+
+　　　　　　for (var i = 0; i < arrPara.length; i++) {
+　　　　　　　　arr = arrPara[i].split("=");
+
+　　　　　　　　if (arr != null && arr[0] == paraName) {
+　　　　　　　　　　return arr[1];
+　　　　　　　　}
+　　　　　　}
+　　　　　　return "";
+　　　　}
+　　　　else {
+　　　　　　return "";
+　　　　}
+　　}
+  var spiderInfoId = GetUrlParam("spiderInfoId");
+  
+
+/*   $.get(baseURL + "spiderInfo/info/"+spiderInfoId, function(r){
+	    alert($.parseJSON(r.spiderInfo.jsonData))
+		editor1.set($.parseJSON(r.spiderInfo.jsonData));
+  }); */
+  
+  $.ajax({
+		type: "GET",
+	    url: baseURL + "spiderInfo/info/"+spiderInfoId,
+        contentType: "application/json",
+	    success: function(r){
+	    	if(r.code === 0){
+	    		editor1.setText(r.spiderInfo.jsonData);
+			}else{
+				alert(r.msg);
+			}
+		}
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>采集源列表</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../plugins/cron/jquery-cron.css">
+<link rel="stylesheet" href="../../css/main.css">
+<link rel="stylesheet" href="../../css/vue-multiselect.min.css">
+<link rel="stylesheet" href="../../plugins/loading/css/app.css">
+<link href="../../bejson/css/jsoneditor.css" rel="stylesheet" type="text/css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../libs/vue-multiselect.min.js"></script>
+<script src="../../libs/validator.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../plugins/cron/jquery-cron-zh_CN.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../plugins/loading/app.min.js"></script>
+<script src="../../bejson/js/jsoneditor.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<div class="form-group col-sm-1">
+			<select id="projectSelected" class="form-control" @click="reload" style="width:120px" v-model="q.projectSelected">
+			  <option value=0>全部</option>
+			  <option v-for="project in projectList" v-bind:value="project.id">
+			    {{ project.name }}
+			  </option>
+			</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.searchword" @keyup.enter="query" placeholder="域名或网站名">
+			</div>
+			<a class="btn btn-default" @click="query">查询</a>
+
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			<a class="btn btn-primary" @click="testTask"><i class="fa fa-plus"></i>&nbsp;测试模板</a>
+			<a class="btn btn-primary" @click="openUrl('https://qqe2.com/')"><i class="fa fa-plus"></i>&nbsp;JSON工具</a>
+			<a class="btn btn-primary" @click="runTask"><i class="fa fa-plus"></i>&nbsp;立即执行</a>
+			<a class="btn btn-primary" @click="runTimeTask"><i class="fa fa-plus"></i>&nbsp;定时任务</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+	    
+	   
+	    
+	    <div id="createScheduler" style="display:none">
+	    	<div id='selector'></div>
+			<input id="cron" type="hidden"/>
+	    </div>
+	    <div id="selectWorker" style="display:none">
+	    	<select id="workerSelected" class="form-control" @click="reload" style="width:240px" v-model="q.workerSelected">
+			  <option value=0>自动分配</option>
+			  <option v-for="worker in workerList" v-bind:value="worker.workerId">
+			    {{ worker.workerContextPath }}
+			  </option>
+			</select>
+	    </div>
+    </div>
+	<div class="modal fade loading" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	</div>
+    <div v-show="showRunList">
+    	<div class="grid-btn">
+    		<a class="btn btn-primary" @click="reload"><i class="fa fa-plus"></i>&nbsp;返回</a>
+		</div>
+     	<table id="testGrid"></table>
+	    <div id="testPager"></div>
+    </div>
+    <div v-show="showEdit" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">网站名称</div>
+			   	<div class="col-sm-10">
+			   	<!--  
+			      <input type="text" class="form-control" v-model="spiderInfo.siteName" placeholder="网站名称"/>
+			      -->
+				  <multiselect v-model="spiderInfo.siteName" :options="options" :searchable="true" :close-on-select="true" :show-labels="true" @select="selectAction"  placeholder="请选择网站"></multiselect>
+  
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">请求URL</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderInfo.url" placeholder="请求URL"/>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">域名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spiderInfo.domain" placeholder="域名"/>
+			    </div>
+			</div>
+			<div v-if="spiderInfo.type == 1" class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+				   	<label class="checkbox-inline">
+					  <input type="checkbox" v-model="spiderInfo.autoDetectPublishDate"/>是否自动探测发布日期,尽量手工配置,自动探测费时,默认关闭
+					</label>
+				</div>
+			</div>
+			<!--  
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">所属项目</div>
+			   	<div class="col-sm-10">
+			   		<label v-for="project in projectList" class="checkbox-inline">
+					  <input type="checkbox" :value="project.id" v-model="spiderInfo.projectIdList">{{project.name}}
+					</label>
+				</div>
+			</div>
+			-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-warning" @click="saveOrUpdate" value="保存"/>
+				<input type="button" class="btn btn-warning" @click="templateTest" value="模板测试"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">json配置</div>
+ 			   	<div class="col-sm-10">
+			      <textarea  class="form-control"  rows="30" cols="18" style="margin: 0px -636.997px 0px 0px; width: 850px; height: 230px;" v-model="spiderInfo.jsonData" placeholder="请数据json模板配置"></textarea>			      
+			    </div> 
+			</div>
+	
+		</form>
+	</div>
+</div>
+<script src="../../js/modules/spider/spiderInfo.js"></script>
+</body>
+</html>

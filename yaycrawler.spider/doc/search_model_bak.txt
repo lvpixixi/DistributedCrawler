@@ -1,0 +1,38 @@
+﻿{
+  "id":"weixin.sogou.com", 
+  "spiderConf":{
+ 	 "startURL": [ 
+		"http://www.wanfangdata.com.cn/searchResult/getCoreSearch.do?d=0.3406003812546583"
+	  ],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.wanfangdata.com.cn",
+	  "timeout": 50000
+  },
+  "pageProcessorConf":{
+  	 "name":"searchModel",
+     "mapConf":{
+        "pages":1,
+        "seedUrl":"http://www.wanfangdata.com.cn/searchResult/getCoreSearch.do?d=0.3406003812546583",
+     	"indexs":[  "1005628921800163328,机器学习,machine learning" 
+					
+					],
+     	"listExpression": "//div[@class='ResultCont']"
+     },
+  	 "extractors": [
+	  	 	{
+	 		"objName": "DetailInfo",	 		
+	 		"objXpath": "//html",
+	 		"dataType":"MAP",
+	 		"multi": false,     
+	 		"fieldParseRules": [
+	        {
+	          "valueType": "String",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(div[@id='see_alldiv']).get()"
+	        }]
+	    }]
+  }
+}

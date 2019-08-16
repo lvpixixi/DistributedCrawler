@@ -1,0 +1,67 @@
+{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["NewsDBPipeline"],
+  "startURL": [ "http://aerospace.ckcest.cn/txcbController.do?method=getTxcb&qsnd=2010"],
+  "domain": "aerospace.ckcest.cn",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefOnclick":"//tr[@class='media']/td[5]/img/@onclick",
+  "pagingModel": {
+      "startPage": 21,
+      "endPage": 50,
+      "pagingType": "rule",
+      "pageNumRules": "http://aerospace.ckcest.cn/txcbController.do?method=getTxcbList&cnName=&categoryno=&pinyinS=&strokes=&pageNo=${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "keywords_space",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "thesaurusCn",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[1]/td[2]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "thesaurusEn",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[2]/td[2]/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "thesaurusNum",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[3]/td[2]/text()",
+          
+        },
+        {
+          "sourceType": "rawhtml",
+          "fieldExtractorType": "html",
+          "fieldName": "downWords",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[4]",
+          
+        },
+        {
+          "sourceType": "rawhtml",
+          "fieldExtractorType": "html",
+          "fieldName": "upperWords",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[5]",
+          
+        },
+        {
+          "sourceType": "rawhtml",
+          "fieldExtractorType": "html",
+          "fieldName": "moreWords",
+          "fieldExtractorExp": "//div[@class='zmdiv']/table/tbody/tr[6]",
+          
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<mapper namespace="io.renren.modules.spider.dao.NewsDao">
+	<select id="queryObject" resultType="io.renren.modules.spider.entity.News">
+		select * from news where id = #{id} 
+	</select>
+	
+	<select id="queryList" parameterType="map" resultType="io.renren.modules.spider.entity.News">
+		select * from news where 1 = 1 order by crawlerdate desc, pubdate desc		
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryListByKeyword" parameterType="map" resultType="io.renren.modules.spider.entity.News">
+		select * from ${dbname} where title like '%${keyword}%' order by crawlerdate desc, pubdate desc
+		<if test="offset != null and limit != null">
+			limit ${offset}, ${limit}
+		</if>
+	</select>
+	
+	<select id="queryById" parameterType="map" resultType="io.renren.modules.spider.entity.News">
+		select * from ${dbname} where id = #{id}	
+	</select>
+	
+	<select id="queryListCountByKeyword" parameterType="map" resultType="int">
+		select count(*) from ${dbname} where title like '%${keyword}%'
+	</select>
+	
+	<select id="queryTotal" parameterType="map" resultType="int">
+		select count(*) from news where 1 = 1 
+		
+	</select>
+	
+	<insert id="save" parameterType="io.renren.modules.spider.entity.News">
+		insert into news(`id`,`title`,`attchfiles`,`pubdate`,`sourcesite`,`summary`,`url`,`sitedomain`,`author`,`crawlerdate`,`h1`,`h2`,`h3`,`h4`)
+			values(#{id},#{title},#{attchfiles},#{pubdate},#{sourcesite},#{summary},#{url},#{sitedomain},#{author},#{crawlerdate},#{h1},#{h2},#{h3},#{h4})
+	</insert>
+	
+	<update id="update" parameterType="io.renren.modules.spider.entity.News">
+		update news set `title` = #{title}, `attchfiles` = #{attchfiles}, `pubdate` = #{pubdate} ,`sourcesite` = #{sourcesite}, `summary` = #{summary}, `url` = #{url} 
+			 where id = #{id}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="string">
+		delete from news where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="getAllBy" parameterType="map" resultType="java.util.LinkedHashMap">
+		select * from ${tbname} where pubdate >= #{pubdate} and crawlerdate > #{crawlerdate}
+	</select>
+	
+	<select id="getNamespace4Replace" resultType="io.renren.modules.spider.entity.News">
+		select id, content, attchfiles, content_tr as contentTr from news_en_copy
+	</select>
+	
+	<update id="updatebatch" parameterType="io.renren.modules.spider.entity.News">
+		<foreach collection="list" item="item" index="index" 
+	        separator=";">
+			UPDATE ${tbname} SET formattedContent=#{item.formattedContent} WHERE id=#{item.id}
+	    </foreach>
+	</update>
+	<update id="updateNews">
+			UPDATE ${tbname} SET formattedContent=#{formattedContent} WHERE id=#{id}
+	</update>
+	<select id="selectNews2update" resultType="io.renren.modules.spider.entity.News">
+		SELECT * from news_cn
+	</select>
+	<update id="updateNewsSummary">
+		UPDATE news_cn SET summary=#{summary} WHERE id=#{id}
+	</update>
+	
+	<update id="updateNewsSimCode">
+		UPDATE news SET `h1` = #{h1},`h2` = #{h2},`h3` = #{h3},`h4` = #{h4} WHERE id=#{id}
+	</update>
+
+	<!-- 获取所有的武器库的武器名称 -->
+	<select id="getWeaponNames" resultType="string">
+		SELECT title FROM weapon
+	</select>
+
+	<!-- 批量更新第一种方法，通过接收传进来的参数list进行循环着组装sql -->
+    <update id="batchUpdate" parameterType="java.util.Map">
+        <!-- 接收list参数，循环着组装sql语句，注意for循环的写法
+             separator=";" 代表着每次循环完，在sql后面放一个分号
+             item="cus" 循环List的每条的结果集
+             collection="list" list 即为 map传过来的参数key -->
+        <foreach collection="list" separator=";" item="cus">
+            update t_customer set
+            c_name = #{cus.name},
+            c_age = #{cus.age},
+            c_sex = #{cus.sex},
+            c_ceroNo = #{cus.ceroNo},
+            c_ceroType = #{cus.ceroType}
+            where id = #{cus.id}
+        </foreach>
+    </update>
+ 
+    <!-- 批量更新第二种方法，通过 case when语句变相的进行批量更新 -->
+    <update id="batchUpdateCaseWhen" parameterType="java.util.Map">
+        update t_customer
+        <trim prefix="set" suffixOverrides=",">
+            <!-- 拼接case when 这是一种写法 -->
+            <!--<foreach collection="list" separator="" item="cus" open="c_age = case id" close="end, ">-->
+            <!--when #{cus.id} then #{cus.age}-->
+            <!--</foreach>-->
+ 
+            <!-- 拼接case when 这是另一种写法，这种写着更专业的感觉 -->
+            <trim prefix="c_name =case" suffix="end,">
+                <foreach collection="list" item="cus">
+                    <if test="cus.name!=null">
+                        when id=#{cus.id} then #{cus.name}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="c_age =case" suffix="end,">
+                <foreach collection="list" item="cus">
+                    <if test="cus.age!=null">
+                        when id=#{cus.id} then #{cus.age}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="c_sex =case" suffix="end,">
+                <foreach collection="list" item="cus">
+                    <if test="cus.sex!=null">
+                        when id=#{cus.id} then #{cus.sex}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="c_ceroNo =case" suffix="end,">
+                <foreach collection="list" item="cus">
+                    <if test="cus.ceroNo!=null">
+                        when id=#{cus.id} then #{cus.ceroNo}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="c_ceroType =case" suffix="end,">
+                <foreach collection="list" item="cus">
+                    <if test="cus.ceroType!=null">
+                        when id=#{cus.id} then #{cus.ceroType}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        <where>
+            <foreach collection="list" separator="or" item="cus">
+                id = #{cus.id}
+            </foreach>
+        </where>
+    </update>
+	
+</mapper>

@@ -1,0 +1,61 @@
+{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsDBPipeline"],
+  "startURL": [ "http://temp.163.com/special/00804KVA/cm_war.js?callback=data_callback"],
+  "domain": "war.163.com",
+  "newsCategory":"中文新闻",
+  "dbType":"news_cn",
+  "src":"网易军事",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefRegex":"http://war.163.com/(\\d{2})/(\\d{4})/(\\d{2})/(.*?).html",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://temp.163.com/special/00804KVA/cm_war.js?callback=data_callback&${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_cn",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='endText']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@class='gg200x300']",
+               			"//div[@class='ep-source cDGray']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='epContentLeft']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@class='post_time_source']/text()",
+          
+        }
+      ]
+    }
+  }
+}

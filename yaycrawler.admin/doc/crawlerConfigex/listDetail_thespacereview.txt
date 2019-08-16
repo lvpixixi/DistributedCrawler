@@ -1,0 +1,65 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "http://www.thespacereview.com/"],
+  "domain": "www.thespacereview.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"html/body/div[3]/table/tbody/tr/td[2]/h3/a/@href",  
+  "newsCategory":"美国新闻",
+  "dbType":"news_other",
+  "src":"www.thespacereview.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "http://www.thespacereview.com/?${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "html/body/div[3]/table/tbody/tr/td[2]",
+          "excludeRegionExp": {
+               "xpath":[
+               			"html/body/div[3]/table/tbody/tr/td[2]/h1",
+               			"//h3[@class='byline']",
+               			"//a[@class='addthis_button']",
+               			"//p[@class='byline']",
+               			"//hr",
+               			"//td[@class='pullquote']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "html/body/div[3]/table/tbody/tr/td[2]/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "html/body/div[3]/table/tbody/tr/td[2]/h3[1]/span/text()",
+          
+        }
+      ]
+    }
+  }
+}

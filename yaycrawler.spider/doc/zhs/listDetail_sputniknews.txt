@@ -1,0 +1,72 @@
+{
+  "id":"sputniknews.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://sputniknews.com/military/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "sputniknews.com",
+	  "timeout": 5000,
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='b-stories__info']/a/@href).all()",
+     	"pagingRules": ["paging(https://sputniknews.com/military/?pageNo$$pageNo$$1$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//div[@class='b-mainnav']).get()",
+				"xpath(//div[@class='b-sitenav']).get()",
+				"xpath(//div[@class='b-sitenav-all']).get()",
+				"xpath(//div[@class='b-header__nav']).get()",
+				"xpath(//div[@class='b-article__refs']).get()",
+				"xpath(//div[@class='b-article__refs-text']).get()",
+				"xpath(//div[@class='b-inject m-inject-min']).get()",
+				"xpath(//div[@class='b-article__likes js-likes']).get()",
+				"xpath(//div[@class='b-banner m-banner-33 m-mb20 m-mt10']).get()",
+				"xpath(//div[@class='l-wrap m-oh']).get()",
+				"xpath(//div[@class='l-sidebar']).get()",
+				"xpath(//div[@class='social-likes-pane m-clear social-likes social-likes_visible social-likes_ready social-likes-pane__fixed']).get()",
+				"xpath(//div[@class='taboola-banner']).get()",
+				"xpath(//div[@class='social-likes-pane__etc-popup']/div).get()",
+				"xpath(//section[@class='comments']).get()",
+				"xpath(//iframe).get()",
+				"xpath(//div[@class='b-image-share']).get()",
+				"xpath(//div[@class='b-inject m-inject-free m-inject-free-video']).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@class='b-article__header-title ']/h1/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='b-article__text']).get()",
+	        },
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//time[@class='b-article__refs-date']/text()).get()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id":"www.weather.gov", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.weather.gov/news/"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.weather.gov",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//p[@class='archive']/a/@href).all()",
+     	"pagingRules": ["paging(https://www.weather.gov/news/?Page=pageNo$$pageNo$$1$$1)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//span[@class='date-published']/text()).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//div[@class='pane-content']/h1/text() | //h1[@class='location-pagetitle']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='panels-flexible-row panels-flexible-row-new-1 clearfix content-row'] | //div[@class='cms-content']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//span[@class='date-published']/text() | //meta[@name='DC.date.created']/@content).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@class='cms-content']/**/@src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

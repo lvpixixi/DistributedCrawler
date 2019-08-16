@@ -1,0 +1,62 @@
+{
+  "id":"eos.org", 
+  "spiderConf":{
+ 	  "startURL": [ "https://eos.org/articles"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "eos.org",
+	  "timeout": 5000
+  },
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//h3[@class='excerpt-item__title']/a/@href).all()",
+     	"pagingRules": ["paging(https://eos.org/articles/page/pageNo$$pageNo$$1$$3)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//p[@class='single-header__meta']).get()",
+	       		"xpath(//nav[@class='nav--add-this']).get()",
+	       		"xpath(//h1[@class='single-header__title']).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@class='single-header__title']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//div[@class='content-well']).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//p[@class='single-header__meta']/time/@datetime).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//img/@srcset).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

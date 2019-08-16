@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>任务发布</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../css/main.css">
+<script src="../../libs/jquery.min.js"></script>
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../libs/bootstrap.min.js"></script>
+<script src="../../libs/vue.min.js"></script>
+<script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+<script src="../../plugins/cron/jquery-cron-zh_CN.js"></script>
+<script src="../../js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="true" class="panel panel-default">
+		<form class="form-horizontal">
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">网站名称</div>
+			   	<div class="col-sm-10">
+			      <select id="spiderInfoSelected" class="form-control" style="width:120px" v-model="task.spiderInfoId">
+					  <option value=0>全部</option>
+					  <option v-for="spiderInfo in spiderInfoList" v-bind:value="spiderInfo.id">
+					    {{ spiderInfo.siteName }}
+					  </option>
+					</select>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">请求参数（JSON）</div>
+			   	<div class="col-sm-10">
+			      <textarea  class="form-control"  rows="30" cols="18" style="margin: 0px -636.997px 0px 0px; width: 850px; height: 100px;" v-model="task.paramJson" placeholder="请数据json模板配置"></textarea>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">任务类型</div>
+			    <label class="radio-inline">
+				  <input type="radio" name="status" value="1" v-model="task.jobType"/> 单次任务
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="status" value="0" v-model="task.jobType"/> 定时任务
+				</label>
+			</div>
+			<div v-show="task.taskType==0" class="form-group">
+			   	<div class="col-sm-2 control-label">调度表达式</div>
+			   	<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="task.cron" placeholder="cron表达式"/>
+					<input type="button" class="btn btn-warning" @click="showLayer" value="时间设定"/>
+			    </div>	
+			    <div id="createScheduler" style="display:none">
+			    	<div id='selector'></div>
+					<input id="cron" type="hidden"/>
+			    </div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="submit" value="提交"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reset" value="清空"/>
+			</div>
+		</form>
+	</div>
+</div>
+<script src="../../js/modules/spider/jobSubmit.js"></script>
+</body>
+</html>

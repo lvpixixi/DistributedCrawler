@@ -1,0 +1,84 @@
+﻿{
+  "pageProcessorModel":"listAndDetail", 
+  "pipelines":["ImgPipeline","NewsTranslate2DBPipeline"],
+  "startURL": [ "https://www.space.com/news/"],
+  "domain": "www.space.com",
+  "retry": 3,
+  "rootPath": "D:/data/webmagic/",
+  "listHrefXPath":"//div[@class='contentListing']/ul/li/a/@href", 
+  "newsCategory":"美国新闻",
+  "dbType":"news_other", 
+  "src":"www.space.com",
+  "pagingModel": {
+      "startPage": 1,
+      "endPage": 1,
+      "pagingType": "rule",
+      "pageNumRules": "https://www.space.com/news/${page}"
+  },
+  "extractorCfgs": {
+    "News": {
+      "objName": "news_en",      
+      "objXpath": "//html",
+      "fileNameRules":["title"],
+      "multi": false,   
+      "fieldList": [
+        {
+          "sourceType": "newstext",
+          "fieldExtractorType": "html",
+          "fieldName": "content",
+          "fieldExtractorExp": "//div[@id='content-block']",
+          "excludeRegionExp": {
+               "xpath":[
+               			"//div[@id='content-block']/ul[@class='breadcrumb']",
+               			"//div[@id='content-block']/h1",
+               			"//div[@id='content-block']/div[@class='byline']",
+               			"//div[@class='mod top-mod partner-banner']",
+               			"//div[@id='stickyShare']",
+               			"//div[contains(@class, 'jw-loaded')]",
+               			"//div[@id='in-article-1']", 
+               			"//div[@class='youtube-container']",
+               			"//div[@id='content-block']/h1",
+               			"//div[@id='below_article']",
+               			"//iframe",
+               			"//section[@class='purch-related']",
+               			"//div[@id='rev_content_placeholder']",
+               			"//div[@id='content-block']/div[2]/div[2]/div[2]/p/em",
+               			"//dd[@class='social-byline']", 
+               			"//*[@id='content-block']/div/section/header/h3",
+               			"//div[@class='rc-clearfix rc-row rc-t-10 rc-g-dl-1 rc-g-d-1']",
+               			"//div[@class='line author-bio']"
+               			]
+          },
+          "innerFileConfigs": [
+            {
+              "resourceName": "image",
+              "resourceRegionExp": "//img/@src | //img/@data-src",
+              "multi": true,
+            }
+          ]
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "title",
+          "fieldExtractorExp": "//div[@id='content-block']/h1/text()",
+          
+        },
+        {
+          "sourceType": "datetext",
+          "fieldExtractorType": "html",
+          "fieldName": "pubDate",
+          "fieldExtractorExp": "//div[@id='content-block']/div[@class='byline']/time/text()",
+          
+        },
+        {
+          "sourceType": "rawtext",
+          "fieldExtractorType": "html",
+          "fieldName": "author",
+          "fieldExtractorExp": "//span[@class='author']/a/text() | //div[@id='content-block']/div[@class='byline']/span/text()",
+          
+        }
+      ]
+    }
+  }
+}

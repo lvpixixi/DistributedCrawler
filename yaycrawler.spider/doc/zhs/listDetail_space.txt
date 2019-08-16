@@ -1,0 +1,77 @@
+{
+  "id":"www.space.com", 
+  "spiderConf":{
+ 	  "startURL": [ "https://www.space.com/news"],
+	  "thread": 1,
+	  "retry": 2,
+	  "rootPath": "D:/data/webmagic/",
+	  "domain": "www.space.com",
+	  "timeout": 5000
+  },
+  "project": "HJS",
+  "pipelines":["MongoTranslateDBPipeline", "FTPFilePipeline"],
+  "pageProcessorConf":{
+  	 "name":"listAndDetail",
+     "mapConf":{
+     	"listRule":"xpath(//div[@class='listingResults mixed']/div/a/@href).all()",
+     	"pagingRules": ["paging(https://www.space.com/news/pageNo$$pageNo$$2$$2)"]
+     },
+	 "extractors": [
+	   {
+ 		"objName": "news_zhs",
+ 		"pks":["title"],
+ 		"fileNameRules":["title"],
+ 		"objXpath": "//html",
+ 		"dataType":"MAP",
+ 		"multi": false, 
+ 		"excludeExpressions":{
+	       	"rule": [
+	       		"xpath(//article[@class='news-article ']/header).get()",
+				"xpath(//div[@class='promo-standard promo--hidden noskim']).get()",
+				"xpath(//iframe).get()",
+				"xpath(//footer).get()",
+				"xpath(//blockquote).get()",
+				"xpath(//video).get()",
+				"xpath(//script).get()",
+				"xpath(//nav[@class='pagination-gallery-sequential top']).get()",
+				"xpath(//li[@class='thumb']).get()",
+				"xpath(//li[@class='thumb ']).get()",
+				"xpath(//div[@class='partner-banner']).get()"
+	       	]
+	    },
+ 		"fieldParseRules": [
+ 		 	{
+	          "valueType": "String",
+	          "fieldName": "title",
+	          "remark":"标题",
+	          "rule": "xpath(//h1[@itemprop='name headline']/text()).get()"
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "content",
+	          "remark":"内容",
+	          "rule": "xpath(//article[@class='news-article ']).get()",
+	        }, 
+	        {
+	          "valueType": "Html",
+	          "fieldName": "author",
+	          "remark":"作者",
+	          "rule": "xpath(//span[@itemprop='name']/text()).get()",
+	        }, 
+	        {
+	          "valueType": "Date",
+	          "fieldName": "pubDate",
+	          "remark":"发布日期",
+	          "rule": "xpath(//time[@itemprop='datePublished']/@datetime).get()"
+	        },    
+	        {
+	          "valueType": "File",
+	          "remark": "内容页图片列表",
+	          "fieldName": "images",
+	          "rule": "xpath(//div[@itemprop='image']/img/@src | //p[@class='bordeaux-image-check']/img/@data-src).all()"
+	        }
+	      ]
+	    }
+	]
+  }
+}

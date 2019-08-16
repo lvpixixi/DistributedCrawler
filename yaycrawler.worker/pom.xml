@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd
+http://www.w3.org/2001/XMLSchema-instance ">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yaycrawler</groupId>
+    <artifactId>yaycrawler-worker</artifactId>
+    <version>${yaycrawler.version}</version>
+    <packaging>war</packaging>
+
+    <name>yaycrawler.worker</name>
+    <description>yaycrawler.worker</description>
+
+    <parent>
+        <artifactId>yaycrawler-parent</artifactId>
+        <groupId>com.yaycrawler</groupId>
+        <version>${yaycrawler.version}</version>
+    </parent>
+
+
+    <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-web</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-actuator</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yaycrawler</groupId>
+            <artifactId>yaycrawler-common</artifactId>
+            <version>${yaycrawler.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yaycrawler</groupId>
+            <artifactId>yaycrawler-spider</artifactId>
+            <version>${yaycrawler.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>com.yaycrawler</groupId>
+			<artifactId>yaycrawler-dao</artifactId>
+			 <version>${yaycrawler.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        <dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.4.1</version>
+		</dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="******************** ${basedir}/deploy*************************"/>
+                                <mkdir dir="${basedir}/target/${artifactId}-${version}/WEB-INF/classes/phantomjs"/>
+                                <copy todir="${basedir}/target/${artifactId}-${version}/WEB-INF/classes/phantomjs">
+                                    <fileset dir="../exec/phantomjs"/>
+                                </copy>
+                                <mkdir dir="${basedir}/target/${artifactId}-${version}/WEB-INF/classes/casperjs"/>
+                                <copy todir="${basedir}/target/${artifactId}-${version}/WEB-INF/classes/casperjs">
+                                    <fileset dir="../exec/casperjs"/>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
