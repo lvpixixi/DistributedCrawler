@@ -1,7 +1,7 @@
 
-YayCrawler 项目简介  
+DistributedCrawler 项目简介  
    
-    YayCrawler爬虫技术交流 559745472 欢迎加群讨论，快速启动！！！ 
+    DistributedCrawler爬虫群 559745472 欢迎加群讨论，快速启动！！！ 
 
 
 项目目标
@@ -68,7 +68,7 @@ Docker镜像：
 
 YayCrawler  爬虫技术交流  559745472 
 
-install jar :  https://git.oschina.net/shentong_012
+
 
 ![输入图片说明](http://git.oschina.net/uploads/images/2016/1012/110209_e7df5de8_302008.png "在这里输入图片标题")
 
